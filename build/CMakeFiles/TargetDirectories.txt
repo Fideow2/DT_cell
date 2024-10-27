@@ -1,0 +1,3 @@
+/home/fideow/Desktop/qwq/testopencv/build/CMakeFiles/image_processor.dir
+/home/fideow/Desktop/qwq/testopencv/build/CMakeFiles/edit_cache.dir
+/home/fideow/Desktop/qwq/testopencv/build/CMakeFiles/rebuild_cache.dir
