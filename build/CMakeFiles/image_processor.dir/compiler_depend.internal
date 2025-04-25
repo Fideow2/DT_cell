@@ -4,7 +4,7 @@
 CMakeFiles/image_processor.dir/main.cpp.o
  /home/fideow/Desktop/qwq/testopencv/main.cpp
  /usr/include/stdc-predef.h
- /usr/include/opencv4/opencv2/features2d.hpp
+ /usr/include/opencv4/opencv2/opencv.hpp
  /usr/include/opencv4/opencv2/opencv_modules.hpp
  /usr/include/opencv4/opencv2/core.hpp
  /usr/include/opencv4/opencv2/core/cvdef.h
@@ -310,11 +310,11 @@ CMakeFiles/image_processor.dir/main.cpp.o
  /usr/include/opencv4/opencv2/core/optim.hpp
  /usr/include/opencv4/opencv2/core/ovx.hpp
  /usr/include/opencv4/opencv2/core/cvdef.h
+ /usr/include/opencv4/opencv2/calib3d.hpp
+ /usr/include/opencv4/opencv2/features2d.hpp
  /usr/include/opencv4/opencv2/flann/miniflann.hpp
  /usr/include/opencv4/opencv2/flann/defines.h
  /usr/include/opencv4/opencv2/flann/config.h
- /usr/include/opencv4/opencv2/opencv.hpp
- /usr/include/opencv4/opencv2/calib3d.hpp
  /usr/include/opencv4/opencv2/core/affine.hpp
  /usr/include/opencv4/opencv2/dnn.hpp
  /usr/include/opencv4/opencv2/dnn/dnn.hpp
