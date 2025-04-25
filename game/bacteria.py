@@ -6,6 +6,7 @@ from pygame.math import Vector2
 def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
+
 class Bacteria(pygame.sprite.Sprite):
     def __init__(self, genes):
         super().__init__()
