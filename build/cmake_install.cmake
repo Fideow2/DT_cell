@@ -1,4 +1,4 @@
-# Install script for directory: /home/fideow/Desktop/qwq/testopencv
+# Install script for directory: /home/fideow/Desktop/qwq/DT_cell/testopencv
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/fideow/Desktop/qwq/testopencv/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/fideow/Desktop/qwq/DT_cell/testopencv/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/fideow/Desktop/qwq/testopencv/main.cpp" "CMakeFiles/image_processor.dir/main.cpp.o" "gcc" "CMakeFiles/image_processor.dir/main.cpp.o.d"
+  "/home/fideow/Desktop/qwq/DT_cell/testopencv/main.cpp" "CMakeFiles/image_processor.dir/main.cpp.o" "gcc" "CMakeFiles/image_processor.dir/main.cpp.o.d"
   )
 
 # Targets to which this target links.
