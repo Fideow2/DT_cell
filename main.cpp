@@ -43,9 +43,52 @@ Point2f bezierPoint(const vector<Point2f>& controlPoints, float t) {
     return point;
 }
 
+// Function to draw a spear
+void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float scale, float cellWidth, float cellHeight) {
+    // Scale factor for left/right direction
+    float directionFactor = faceRight ? 1.0f : -1.0f;
+    
+    // Spear parameters
+    float spearLength = 80.0f * scale;
+    float spearThickness = max(1.0f, 2.0f * scale); // Ensure thickness is at least 1
+    float spearheadWidth = 10.0f * scale;
+    float spearheadHeight = 15.0f * scale;
+    
+    // Starting point of the spear (in front and below the cell)
+    Point2f spearStart(
+        cellPosition.x + directionFactor * (cellWidth * 0.5f), 
+        cellPosition.y + (cellHeight * 0.5f)
+    );
+    
+    // End point of the spear
+    Point2f spearEnd(
+        spearStart.x + directionFactor * spearLength, 
+        spearStart.y + spearLength * 0.3f  // Angled downward
+    );
+    
+    // Draw the spear shaft
+    line(canvas, 
+         Point(static_cast<int>(spearStart.x), static_cast<int>(spearStart.y)),
+         Point(static_cast<int>(spearEnd.x), static_cast<int>(spearEnd.y)),
+         Scalar(0, 0, 0), // Black color
+         max(1, static_cast<int>(spearThickness)), // Ensure thickness is at least 1
+         LINE_AA);
+    
+    // Draw the spearhead (triangle)
+    Point spearheadPoints[3];
+    spearheadPoints[0] = Point(static_cast<int>(spearEnd.x), static_cast<int>(spearEnd.y)); // Tip
+    spearheadPoints[1] = Point(static_cast<int>(spearEnd.x - directionFactor * spearheadHeight),
+                              static_cast<int>(spearEnd.y - spearheadWidth/2)); // Top corner
+    spearheadPoints[2] = Point(static_cast<int>(spearEnd.x - directionFactor * spearheadHeight),
+                              static_cast<int>(spearEnd.y + spearheadWidth/2)); // Bottom corner
+    
+    // Draw filled triangle
+    fillConvexPoly(canvas, spearheadPoints, 3, Scalar(0, 0, 0), LINE_AA);
+}
+
 // Function to draw the cell directly on the canvas
 void drawCell(Mat& canvas, const Point2f& cellPosition, const map<string, float>& config, bool faceRight, 
-              float scale, const Vec3b& cellColor, float time, float tailPhaseOffset, float aggressionLevel) {
+              float scale, const Vec3b& cellColor, float time, float tailPhaseOffset, float aggressionLevel, bool isPlayerControlled) {
     // Get cell dimensions
     float cellWidth = config.at("cell_width") * scale;
     float cellHeight = config.at("cell_height") * scale;
@@ -54,6 +97,11 @@ void drawCell(Mat& canvas, const Point2f& cellPosition, const map<string, float>
 
     // Scale factor for left/right flipped features
     float directionFactor = faceRight ? 1.0f : -1.0f;
+    
+    // Draw the spear for player-controlled cell
+    if (isPlayerControlled) {
+        drawSpear(canvas, cellPos, faceRight, scale, cellWidth, cellHeight);
+    }
     
     // 1) Cell Body (Ellipse)
     ellipse(canvas, Point(static_cast<int>(cellPos.x), static_cast<int>(cellPos.y)), 
@@ -153,8 +201,6 @@ void drawCell(Mat& canvas, const Point2f& cellPosition, const map<string, float>
         
         // Calculate wave effect perpendicular to tail direction
         float wavePhase = time * tailWaveSpeed + tailPhaseOffset + t * tailWaveFrequency * 2 * CV_PI;
-        // wavePhase = fmod(wavePhase, 2 * CV_PI); // Restrict wavePhase to (0, PI)
-        // wavePhase = 0.3f / max(wavePhase, 0.01f); // Take the reciprocal
 
         float perpX = -tailDirection.y; // Perpendicular to tail direction
         float perpY = tailDirection.x;
@@ -170,7 +216,7 @@ void drawCell(Mat& canvas, const Point2f& cellPosition, const map<string, float>
     // Draw the tail curve with fixed thickness
     for (size_t i = 6; i < tailCurve.size(); ++i) {
         // Always use a safe fixed thickness for tail segments
-        int tailThickness = 1;
+        int tailThickness = 1; // Minimum thickness of 1
                 
         line(canvas, 
             Point(static_cast<int>(tailCurve[i-1].x), static_cast<int>(tailCurve[i-1].y)), 
@@ -323,8 +369,9 @@ int main() {
                 updateCellPhysics(cell, canvasSize, maxSpeed, drag);
                 
                 // Draw the cell with its unique color, animated tail, and aggression level
+                // Pass the isPlayerControlled flag to determine if spear should be drawn
                 drawCell(canvas, cell.position, config, cell.faceRight, scale, 
-                         cell.color, time, cell.tailPhaseOffset, cell.aggressionLevel);
+                         cell.color, time, cell.tailPhaseOffset, cell.aggressionLevel, cell.isPlayerControlled);
                 
                 // Add "you" text above player's cell
                 if (cell.isPlayerControlled) {
