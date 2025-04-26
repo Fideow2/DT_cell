@@ -34,6 +34,7 @@ struct Cell {
     Point2f acceleration;
     bool faceRight;
     bool isPlayerControlled;
+    int playerNumber;  // 1 for first player, 2 for second player
     Vec3b color;  // Each cell has its own color
     float tailPhaseOffset; // Random phase offset for tail wave
     float aggressionLevel; // Aggression index (0.0 - 1.0) affects mouth and eyes
@@ -47,12 +48,13 @@ struct Cell {
     // Blood effect properties
     vector<BloodDrop> bloodDrops;
     
-    Cell(Point2f pos, bool isPlayer, const Vec3b& baseColor, float phaseOffset, float aggression = 0.0f) : 
+    Cell(Point2f pos, bool isPlayer, int playerNum, const Vec3b& baseColor, float phaseOffset, float aggression = 0.0f) : 
         position(pos), 
         velocity(0, 0), 
         acceleration(0, 0), 
         faceRight(true), 
         isPlayerControlled(isPlayer),
+        playerNumber(playerNum),
         color(baseColor),
         tailPhaseOffset(phaseOffset),
         aggressionLevel(aggression),
@@ -451,7 +453,7 @@ void drawCell(Mat& canvas, const Cell& cell, const map<string, float>& config, f
             Scalar(0, 0, 0), tailThickness, LINE_AA);
     }
 
-    // Draw the spear for player-controlled cell with attack animation
+    // Draw the spear for player-controlled cells
     if (cell.isPlayerControlled) {
         drawSpear(canvas, cellPos, faceRight, scale, cellWidth, cellHeight, 
                  cell.isAttacking, cell.attackTime);
@@ -462,6 +464,14 @@ void drawCell(Mat& canvas, const Cell& cell, const map<string, float>& config, f
     
     // Draw health bar
     drawHealthBar(canvas, cellPos, cellWidth, cell.health, cell.maxHealth);
+    
+    // Add player identification text
+    if (cell.isPlayerControlled) {
+        string playerText = "player " + to_string(cell.playerNumber);
+        Point textPos(static_cast<int>(cell.position.x - 25), 
+                      static_cast<int>(cell.position.y - config.at("cell_height") * scale - 30));
+        putText(canvas, playerText, textPos, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+    }
 }
 
 // Function to update cell physics
@@ -515,13 +525,14 @@ void updateCellPhysics(Cell& cell, const Size& canvasSize, float maxSpeed, float
 int main() {
     // Constants
     const float scale = 0.4f;  // Scale factor to make cells smaller
-    const int numCells = 20;   // Total number of cells
+    const int numCells = 20;   // Total number of cells (including 2 player-controlled cells)
     const float maxSpeed = 5.0f;
     const float accelerationStep = 0.5f;
     const float drag = 0.98f; // Water resistance
     const float randomMoveProbability = 0.05f; // Probability of random movement change
     const float randomMoveStrength = 0.3f; // Strength of random movements
     const Vec3b baseColor(200, 230, 255); // Base cell color (BGR)
+    const Vec3b player2Color(200, 255, 220); // Different color for player 2 (more greenish)
     
     // New constants for aggression behavior
     const float aggressionChangeProbability = 0.01f; // Probability of changing aggression
@@ -531,7 +542,7 @@ int main() {
     
     // New constants for attack behavior
     const float attackDuration = 1.0f; // Complete attack animation in 1 second
-    const float attackDamage = 20.0f;  // Base damage for attacks
+    const float attackDamage = 3.0f;  // Base damage for attacks
 
     map<string, float> config = {
         {"cell_width", 100.f}, {"cell_height", 60.f}, // Absolute size for the cell
@@ -557,14 +568,17 @@ int main() {
     uniform_int_distribution<int> colorDist(-30, 30); // For color variation
     uniform_real_distribution<float> phaseDist(0, 2 * CV_PI); // Random phase for tail wave
 
-    // Create cells - first one is player-controlled
+    // Create cells - first two are player-controlled
     vector<Cell> cells;
     
-    // Create player cell with base color and initial aggression level of 0
-    cells.emplace_back(Point2f(canvasSize.width/2, canvasSize.height/2), true, baseColor, 0.0f, 0.0f);
+    // Create player 1 cell (WASD controls, F attack)
+    cells.emplace_back(Point2f(canvasSize.width/3, canvasSize.height/2), true, 1, baseColor, 0.0f, 0.0f);
+    
+    // Create player 2 cell (Arrow key controls, / attack)
+    cells.emplace_back(Point2f(canvasSize.width*2/3, canvasSize.height/2), true, 2, player2Color, phaseDist(gen), 0.0f);
     
     // Create AI-controlled cells with random positions, colors and aggression levels
-    for (int i = 1; i < numCells; ++i) {
+    for (int i = 2; i < numCells; ++i) {
         // Create a slight color variation from the base color
         Vec3b cellColor = baseColor;
         cellColor[0] = saturate_cast<uchar>(baseColor[0] + colorDist(gen)); // Blue
@@ -577,7 +591,7 @@ int main() {
         // Each cell has a random initial aggression level
         float aggression = aggressionDist(gen);
         
-        cells.emplace_back(Point2f(xDist(gen), yDist(gen)), false, cellColor, phaseOffset, aggression);
+        cells.emplace_back(Point2f(xDist(gen), yDist(gen)), false, 0, cellColor, phaseOffset, aggression);
     }
 
     // For animation timing
@@ -585,6 +599,9 @@ int main() {
     auto lastUpdateTime = startTime;
     float frameTime = 1.0f / 30.0f; // Target 30 FPS
 
+    // Keyboard code storage
+    int key;
+    
     while (true) {
         try {
             // Calculate elapsed time for animation
@@ -661,46 +678,72 @@ int main() {
                     
                     // Draw the cell with its unique color, animated tail, and aggression level
                     drawCell(canvas, cell, config, scale, time);
-                    
-                    // Add "you" text above player's cell
-                    if (cell.isPlayerControlled) {
-                        Point textPos(static_cast<int>(cell.position.x - 10), 
-                                      static_cast<int>(cell.position.y - config.at("cell_height") * scale - 30));
-                        putText(canvas, "you", textPos, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
-                    }
                 }
             }
     
             // Display controls
-            putText(canvas, "Controls: WASD to move, J to attack, Q/E to change aggression", 
+            putText(canvas, "Player 1: WASD to move, F to attack, Q/E to change aggression", 
                     Point(10, 30), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+            putText(canvas, "Player 2: Arrow keys to move, / to attack", 
+                    Point(10, 50), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
     
             imshow("Multi-Cell Simulation", canvas);
     
-            char key = (char)waitKey(30); // Wait for 30ms
+            // Handle keyboard input for both players
+            key = waitKey(30); // Wait for 30ms
             if (key == 27) { // ESC key
                 break;
-            } else if (key == 'w') {
-                cells[0].acceleration.y -= accelerationStep; // Accelerate up
-            } else if (key == 's') {
-                cells[0].acceleration.y += accelerationStep; // Accelerate down
-            } else if (key == 'a') {
-                cells[0].acceleration.x -= accelerationStep; // Accelerate left
-                cells[0].faceRight = false; // Face left
-            } else if (key == 'd') {
-                cells[0].acceleration.x += accelerationStep; // Accelerate right
-                cells[0].faceRight = true; // Face right
-            } else if (key == 'q') {
-                // Decrease player's aggression level
+            }
+            
+            // Player 1 controls (WASD, Q/E for aggression, J for attack)
+            if (key == 'w' || key == 'W') {
+                cells[0].acceleration.y -= accelerationStep;
+            }
+            if (key == 's' || key == 'S') {
+                cells[0].acceleration.y += accelerationStep;
+            }
+            if (key == 'a' || key == 'A') {
+                cells[0].acceleration.x -= accelerationStep;
+                cells[0].faceRight = false;
+            }
+            if (key == 'd' || key == 'D') {
+                cells[0].acceleration.x += accelerationStep;
+                cells[0].faceRight = true;
+            }
+            if (key == 'q' || key == 'Q') {
                 cells[0].aggressionLevel = std::max(0.0f, cells[0].aggressionLevel - 0.1f);
-            } else if (key == 'e') {
-                // Increase player's aggression level
+            }
+            if (key == 'e' || key == 'E') {
                 cells[0].aggressionLevel = std::min(1.0f, cells[0].aggressionLevel + 0.1f);
-            } else if (key == 'j' || key == 'J') {
-                // Start attack if not already attacking
+            }
+            if (key == 'f' || key == 'F') {
                 if (!cells[0].isAttacking) {
                     cells[0].isAttacking = true;
                     cells[0].attackTime = 0.0f;
+                }
+            }
+            
+            // Player 2 controls (Arrow keys for movement, / for attack)
+            // Note: Arrow key codes can vary across platforms; if these don't work,
+            // you may need to adjust the key codes for your system
+            if (key == 82 || key == 2490368) { // UP arrow
+                cells[1].acceleration.y -= accelerationStep;
+            }
+            if (key == 84 || key == 2621440) { // DOWN arrow
+                cells[1].acceleration.y += accelerationStep;
+            }
+            if (key == 81 || key == 2424832) { // LEFT arrow
+                cells[1].acceleration.x -= accelerationStep;
+                cells[1].faceRight = false;
+            }
+            if (key == 83 || key == 2555904) { // RIGHT arrow
+                cells[1].acceleration.x += accelerationStep;
+                cells[1].faceRight = true;
+            }
+            if (key == '/' || key == 47) {
+                if (!cells[1].isAttacking) {
+                    cells[1].isAttacking = true;
+                    cells[1].attackTime = 0.0f;
                 }
             }
         }
