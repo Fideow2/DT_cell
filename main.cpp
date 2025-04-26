@@ -57,13 +57,13 @@ void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float s
     // Starting point of the spear (in front and below the cell)
     Point2f spearStart(
         cellPosition.x + directionFactor * (cellWidth * 0.5f), 
-        cellPosition.y + (cellHeight * 0.5f)
+        cellPosition.y + (cellHeight * 1.0f)
     );
     
     // End point of the spear
     Point2f spearEnd(
         spearStart.x + directionFactor * spearLength, 
-        spearStart.y + spearLength * 0.3f  // Angled downward
+        spearStart.y - spearLength * 0.3f  // Angled downward
     );
     
     // Draw the spear shaft
