@@ -9,6 +9,24 @@
 using namespace cv;
 using namespace std;
 
+// Blood drop structure for attack effect with fixed rotation
+struct BloodDrop {
+    Point2f position;
+    Point2f velocity;
+    float size;
+    float lifetime;
+    float maxLifetime;
+    float rotation;  // Fixed rotation angle
+    
+    BloodDrop(Point2f pos, Point2f vel, float sz, float life, float rot) :
+        position(pos),
+        velocity(vel),
+        size(sz),
+        lifetime(life),
+        maxLifetime(life),
+        rotation(rot) {}
+};
+
 // Cell structure to store individual cell properties
 struct Cell {
     Point2f position;
@@ -25,6 +43,9 @@ struct Cell {
     float maxHealth;     // Maximum health
     bool isAttacking;    // Whether the cell is currently attacking
     float attackTime;    // Time tracker for attack animation
+    
+    // Blood effect properties
+    vector<BloodDrop> bloodDrops;
     
     Cell(Point2f pos, bool isPlayer, const Vec3b& baseColor, float phaseOffset, float aggression = 0.0f) : 
         position(pos), 
@@ -52,6 +73,54 @@ Point2f bezierPoint(const vector<Point2f>& controlPoints, float t) {
         point += coeff * controlPoints[i];
     }
     return point;
+}
+
+// Function to draw a teardrop shape for blood
+void drawTeardropShape(Mat& canvas, const Point2f& position, float size, float rotation, const Scalar& color) {
+    // Define the teardrop shape as a combination of an ellipse and a triangle
+    
+    // Calculate rotation matrix
+    float angle = rotation * (180.0f / CV_PI); // Convert to degrees for OpenCV
+    
+    // Ellipse part (the round part of the teardrop)
+    Size2f ellipseSize(size * 0.8f, size); // Slightly wider than tall
+    RotatedRect ellipseRect(position, ellipseSize, angle);
+    ellipse(canvas, ellipseRect, color, -1, LINE_AA);
+    
+    // Triangle part (the pointed tail of the teardrop)
+    // Calculate points for the triangle at the tail end of the teardrop
+    float tailLength = size * 1.5f;
+    
+    // Calculate the direction vector from the rotation angle
+    Point2f dir(cos(rotation - CV_PI/2), sin(rotation - CV_PI/2));
+    
+    // Calculate triangle points
+    Point2f tailTip = position + tailLength * dir;
+    Point2f tailSide1 = position + size * 0.4f * Point2f(-dir.y, dir.x);
+    Point2f tailSide2 = position + size * 0.4f * Point2f(dir.y, -dir.x);
+    
+    // Draw the triangle
+    Point trianglePoints[3] = {
+        Point(static_cast<int>(tailTip.x), static_cast<int>(tailTip.y)),
+        Point(static_cast<int>(tailSide1.x), static_cast<int>(tailSide1.y)),
+        Point(static_cast<int>(tailSide2.x), static_cast<int>(tailSide2.y))
+    };
+    
+    fillConvexPoly(canvas, trianglePoints, 3, color, LINE_AA);
+}
+
+// Function to draw blood drops
+void drawBloodDrops(Mat& canvas, const vector<BloodDrop>& bloodDrops) {
+    for (const auto& drop : bloodDrops) {
+        // Calculate alpha based on remaining lifetime
+        float alpha = drop.lifetime / drop.maxLifetime;
+        
+        // Blood color - pure red
+        Scalar bloodColor(0, 0, 255); 
+        
+        // Draw a teardrop shape instead of a circle
+        drawTeardropShape(canvas, drop.position, drop.size, drop.rotation, bloodColor);
+    }
 }
 
 // Function to draw a spear with attack animation
@@ -111,6 +180,81 @@ void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float s
     fillConvexPoly(canvas, spearheadPoints, 3, Scalar(0, 0, 0), LINE_AA);
 }
 
+// Function to create blood splash effect at a specific position
+// Modified to make blood drops appear more forward from the hit position and point AWAY from the spear
+// Now creates only one larger blood drop
+void createBloodEffect(Cell& cell, const Point2f& hitPosition, bool faceRight, const Point2f& spearTipPosition) {
+    // Direction factor based on facing direction
+    float directionFactor = faceRight ? 1.0f : -1.0f;
+    
+    // Random number generators
+    random_device rd;
+    mt19937 gen(rd());
+    
+    // Distributions for a splatter effect
+    uniform_real_distribution<float> velXDist(-2.0f, 2.0f);
+    uniform_real_distribution<float> velYDist(-3.0f, 0.5f); // Upward bias
+    uniform_real_distribution<float> offsetXDist(-20.0f, 20.0f); // Position X offset
+    uniform_real_distribution<float> offsetYDist(-20.0f, 20.0f); // Position Y offset
+    uniform_real_distribution<float> forwardOffsetDist(15.0f, 25.0f); // Forward offset (in front of spear)
+    uniform_real_distribution<float> sizeDist(4.0f, 7.0f); // Even larger blood drop since we only have one
+    uniform_real_distribution<float> lifeDist(0.6f, 1.3f); // Longer lifetime
+    
+    // Just one blood drop now
+    // Add forward offset in the facing direction plus some randomness
+    float forwardOffset = forwardOffsetDist(gen); // 15-25 pixels forward
+    float offsetX = offsetXDist(gen);
+    float offsetY = offsetYDist(gen);
+    
+    // Calculate the base position with forward offset in the direction the spear is facing
+    Point2f basePosition = hitPosition + Point2f(directionFactor * forwardOffset, 0);
+    
+    // Then add the random offset
+    Point2f dropPosition(basePosition.x + offsetX, basePosition.y + offsetY);
+    
+    // Random velocity with directional bias
+    float vx = velXDist(gen) + directionFactor * 1.5f;
+    float vy = velYDist(gen); // Mostly upward for splash effect
+    
+    // Random size and lifetime
+    float size = sizeDist(gen);
+    float lifetime = lifeDist(gen);
+    
+    // Calculate the direction from the spear tip to the blood drop position
+    Point2f directionVector = dropPosition - spearTipPosition;
+    
+    // Calculate the rotation angle so that the pointed end of the blood drop points AWAY from the spear
+    float rotation = atan2(directionVector.y, directionVector.x) - CV_PI/2;
+    
+    cell.bloodDrops.emplace_back(dropPosition, Point2f(vx, vy), size, lifetime, rotation);
+}
+
+// Function to update blood drops physics (without rotation updates)
+void updateBloodDrops(vector<BloodDrop>& bloodDrops, float deltaTime) {
+    // Gravity constant
+    const float gravity = 9.8f;
+    
+    for (auto it = bloodDrops.begin(); it != bloodDrops.end();) {
+        // Update lifetime
+        it->lifetime -= deltaTime;
+        
+        if (it->lifetime <= 0) {
+            // Remove dead blood drops
+            it = bloodDrops.erase(it);
+        } else {
+            // Update position based on velocity
+            it->position += it->velocity * deltaTime;
+            
+            // Apply gravity
+            it->velocity.y += gravity * deltaTime;
+            
+            // Note: We keep rotation fixed as assigned at creation
+            
+            ++it;
+        }
+    }
+}
+
 // Function to draw health bar
 void drawHealthBar(Mat& canvas, const Point2f& position, float cellWidth, float health, float maxHealth) {
     float healthBarWidth = cellWidth * 1.2f;
@@ -143,7 +287,8 @@ void drawHealthBar(Mat& canvas, const Point2f& position, float cellWidth, float 
 }
 
 // Function to check if a spear attack hits another cell
-bool checkSpearCollision(const Cell& attacker, const Cell& target, float scale, float cellWidth) {
+bool checkSpearCollision(const Cell& attacker, const Cell& target, float scale, float cellWidth,
+                         Point2f& hitPosition, Point2f& spearTipPosition) {
     if (!attacker.isAttacking || attacker.attackTime >= 0.5f) {
         return false; // Only check during forward thrust
     }
@@ -160,6 +305,10 @@ bool checkSpearCollision(const Cell& attacker, const Cell& target, float scale, 
     
     // Calculate distance from spear tip to target center
     float distance = norm(spearTip - target.position);
+    
+    // Store the hit position (the spear tip)
+    hitPosition = spearTip;
+    spearTipPosition = spearTip;
     
     // Hit if distance is less than target cell width
     return distance < cellWidth * scale * 0.8f;
@@ -308,12 +457,15 @@ void drawCell(Mat& canvas, const Cell& cell, const map<string, float>& config, f
                  cell.isAttacking, cell.attackTime);
     }
     
+    // Draw blood drops for this cell
+    drawBloodDrops(canvas, cell.bloodDrops);
+    
     // Draw health bar
     drawHealthBar(canvas, cellPos, cellWidth, cell.health, cell.maxHealth);
 }
 
 // Function to update cell physics
-void updateCellPhysics(Cell& cell, const Size& canvasSize, float maxSpeed, float drag) {
+void updateCellPhysics(Cell& cell, const Size& canvasSize, float maxSpeed, float drag, float deltaTime) {
     // Update velocity based on acceleration
     cell.velocity += cell.acceleration;
     
@@ -354,6 +506,9 @@ void updateCellPhysics(Cell& cell, const Size& canvasSize, float maxSpeed, float
     } else if (cell.velocity.x < -0.5f) {
         cell.faceRight = false;
     }
+    
+    // Update blood drops physics
+    updateBloodDrops(cell.bloodDrops, deltaTime);
 }
 
 // === Main Program ===
@@ -427,6 +582,7 @@ int main() {
 
     // For animation timing
     auto startTime = chrono::high_resolution_clock::now();
+    auto lastUpdateTime = startTime;
     float frameTime = 1.0f / 30.0f; // Target 30 FPS
 
     while (true) {
@@ -434,6 +590,8 @@ int main() {
             // Calculate elapsed time for animation
             auto currentTime = chrono::high_resolution_clock::now();
             float time = chrono::duration<float>(currentTime - startTime).count();
+            float deltaTime = chrono::duration<float>(currentTime - lastUpdateTime).count();
+            lastUpdateTime = currentTime;
     
             // Create canvas with white background
             Mat canvas = Mat(canvasSize, CV_8UC3, Scalar(255, 255, 255));
@@ -443,7 +601,7 @@ int main() {
                 // Update attack animation if cell is attacking
                 if (cell.isAttacking) {
                     // Progress the attack animation
-                    cell.attackTime += frameTime / attackDuration;
+                    cell.attackTime += deltaTime / attackDuration;
                     
                     // Check if attack animation is complete
                     if (cell.attackTime >= 1.0f) {
@@ -460,10 +618,15 @@ int main() {
                         for (auto& target : cells) {
                             // Don't hit self and only hit living cells
                             if (&target != &cell && target.health > 0) {
-                                if (checkSpearCollision(cell, target, scale, config.at("cell_width"))) {
+                                Point2f hitPosition;
+                                Point2f spearTipPosition;
+                                if (checkSpearCollision(cell, target, scale, config.at("cell_width"), hitPosition, spearTipPosition)) {
                                     // Calculate damage based on player's aggression
                                     float damage = attackDamage * (1.0f + cell.aggressionLevel * 0.5f);
                                     target.health -= damage;
+                                    
+                                    // Create blood effect at hit position, passing spear tip position
+                                    createBloodEffect(target, hitPosition, cell.faceRight, spearTipPosition);
                                     
                                     // Ensure health doesn't go below 0
                                     if (target.health < 0) target.health = 0;
@@ -492,9 +655,9 @@ int main() {
                 }
                 
                 // Only update physics for cells with health > 0
-                if (cell.health > 0) {
+                if (cell.health > 0 || !cell.bloodDrops.empty()) {
                     // Update physics for each cell
-                    updateCellPhysics(cell, canvasSize, maxSpeed, drag);
+                    updateCellPhysics(cell, canvasSize, maxSpeed, drag, deltaTime);
                     
                     // Draw the cell with its unique color, animated tail, and aggression level
                     drawCell(canvas, cell, config, scale, time);
