@@ -49,20 +49,20 @@ void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float s
     float directionFactor = faceRight ? 1.0f : -1.0f;
     
     // Spear parameters
-    float spearLength = 80.0f * scale;
+    float spearLength = 100.0f * scale;
     float spearThickness = max(1.0f, 2.0f * scale); // Ensure thickness is at least 1
     float spearheadWidth = 10.0f * scale;
     float spearheadHeight = 15.0f * scale;
     
     // Starting point of the spear (in front and below the cell)
     Point2f spearStart(
-        cellPosition.x + directionFactor * (cellWidth * 0.5f), 
+        cellPosition.x,// + directionFactor * (cellWidth * 0.2f), 
         cellPosition.y + (cellHeight * 1.0f)
     );
     
     // End point of the spear
     Point2f spearEnd(
-        spearStart.x + directionFactor * spearLength, 
+        spearStart.x + directionFactor * spearLength * 1.5f, 
         spearStart.y - spearLength * 0.3f  // Angled downward
     );
     
@@ -98,10 +98,6 @@ void drawCell(Mat& canvas, const Point2f& cellPosition, const map<string, float>
     // Scale factor for left/right flipped features
     float directionFactor = faceRight ? 1.0f : -1.0f;
     
-    // Draw the spear for player-controlled cell
-    if (isPlayerControlled) {
-        drawSpear(canvas, cellPos, faceRight, scale, cellWidth, cellHeight);
-    }
     
     // 1) Cell Body (Ellipse)
     ellipse(canvas, Point(static_cast<int>(cellPos.x), static_cast<int>(cellPos.y)), 
@@ -223,6 +219,12 @@ void drawCell(Mat& canvas, const Point2f& cellPosition, const map<string, float>
             Point(static_cast<int>(tailCurve[i].x), static_cast<int>(tailCurve[i].y)), 
             Scalar(0, 0, 0), tailThickness, LINE_AA);
     }
+
+        // Draw the spear for player-controlled cell
+    if (isPlayerControlled) {
+        drawSpear(canvas, cellPos, faceRight, scale, cellWidth, cellHeight);
+    }
+
 }
 
 // Function to update cell physics
