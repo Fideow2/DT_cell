@@ -20,6 +20,12 @@ struct Cell {
     float tailPhaseOffset; // Random phase offset for tail wave
     float aggressionLevel; // Aggression index (0.0 - 1.0) affects mouth and eyes
     
+    // New properties for health system and attack animation
+    float health;        // Current health (0-100)
+    float maxHealth;     // Maximum health
+    bool isAttacking;    // Whether the cell is currently attacking
+    float attackTime;    // Time tracker for attack animation
+    
     Cell(Point2f pos, bool isPlayer, const Vec3b& baseColor, float phaseOffset, float aggression = 0.0f) : 
         position(pos), 
         velocity(0, 0), 
@@ -28,7 +34,12 @@ struct Cell {
         isPlayerControlled(isPlayer),
         color(baseColor),
         tailPhaseOffset(phaseOffset),
-        aggressionLevel(aggression) {}
+        aggressionLevel(aggression),
+        health(100.0f),      // Initialize with full health
+        maxHealth(100.0f),   // Maximum health
+        isAttacking(false),  // Not attacking initially
+        attackTime(0.0f)     // Reset attack time
+    {}
 };
 
 // Function to compute Bezier curve points
@@ -43,8 +54,9 @@ Point2f bezierPoint(const vector<Point2f>& controlPoints, float t) {
     return point;
 }
 
-// Function to draw a spear
-void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float scale, float cellWidth, float cellHeight) {
+// Function to draw a spear with attack animation
+void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float scale, 
+               float cellWidth, float cellHeight, bool isAttacking, float attackTime) {
     // Scale factor for left/right direction
     float directionFactor = faceRight ? 1.0f : -1.0f;
     
@@ -54,15 +66,28 @@ void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float s
     float spearheadWidth = 10.0f * scale;
     float spearheadHeight = 15.0f * scale;
     
+    // Calculate attack extension
+    float attackExtension = 0.0f;
+    if (isAttacking) {
+        // Extend forward during the first half of the animation, retract during second half
+        if (attackTime < 0.5f) {
+            attackExtension = attackTime * 2.0f; // 0 to 1
+        } else {
+            attackExtension = (1.0f - attackTime) * 2.0f; // 1 to 0
+        }
+        // Scale the extension effect
+        attackExtension *= 50.0f * scale; // Adjust this multiplier for attack distance
+    }
+    
     // Starting point of the spear (in front and below the cell)
     Point2f spearStart(
-        cellPosition.x,// + directionFactor * (cellWidth * 0.2f), 
+        cellPosition.x, 
         cellPosition.y + (cellHeight * 1.0f)
     );
     
-    // End point of the spear
+    // End point of the spear with attack extension
     Point2f spearEnd(
-        spearStart.x + directionFactor * spearLength * 1.5f, 
+        spearStart.x + directionFactor * (spearLength * 1.5f + attackExtension), 
         spearStart.y - spearLength * 0.3f  // Angled downward
     );
     
@@ -86,18 +111,75 @@ void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float s
     fillConvexPoly(canvas, spearheadPoints, 3, Scalar(0, 0, 0), LINE_AA);
 }
 
+// Function to draw health bar
+void drawHealthBar(Mat& canvas, const Point2f& position, float cellWidth, float health, float maxHealth) {
+    float healthBarWidth = cellWidth * 1.2f;
+    float healthBarHeight = 5.0f;
+    Point2f healthBarPos(
+        position.x - healthBarWidth / 2,
+        position.y - 50.0f // Position above the cell
+    );
+    
+    // Draw health bar background (empty bar - red)
+    rectangle(canvas, 
+        Point(static_cast<int>(healthBarPos.x), static_cast<int>(healthBarPos.y)),
+        Point(static_cast<int>(healthBarPos.x + healthBarWidth), static_cast<int>(healthBarPos.y + healthBarHeight)),
+        Scalar(0, 0, 150), FILLED, LINE_AA);
+    
+    // Draw health bar fill based on current health percentage (green)
+    float healthPercentage = health / maxHealth;
+    rectangle(canvas, 
+        Point(static_cast<int>(healthBarPos.x), static_cast<int>(healthBarPos.y)),
+        Point(static_cast<int>(healthBarPos.x + healthBarWidth * healthPercentage), 
+              static_cast<int>(healthBarPos.y + healthBarHeight)),
+        Scalar(0, 150, 0), FILLED, LINE_AA);
+    
+    // Draw health bar border
+    rectangle(canvas, 
+        Point(static_cast<int>(healthBarPos.x), static_cast<int>(healthBarPos.y)),
+        Point(static_cast<int>(healthBarPos.x + healthBarWidth), 
+              static_cast<int>(healthBarPos.y + healthBarHeight)),
+        Scalar(0, 0, 0), 1, LINE_AA);
+}
+
+// Function to check if a spear attack hits another cell
+bool checkSpearCollision(const Cell& attacker, const Cell& target, float scale, float cellWidth) {
+    if (!attacker.isAttacking || attacker.attackTime >= 0.5f) {
+        return false; // Only check during forward thrust
+    }
+    
+    // Direction facing
+    float directionFactor = attacker.faceRight ? 1.0f : -1.0f;
+    
+    // Calculate spear tip position with attack extension
+    float attackExtension = attacker.attackTime * 2.0f * 50.0f * scale;
+    float spearLength = 100.0f * scale;
+    float spearTipX = attacker.position.x + directionFactor * (spearLength * 1.5f + attackExtension);
+    float spearTipY = attacker.position.y + 60.0f * scale - spearLength * 0.3f;
+    Point2f spearTip(spearTipX, spearTipY);
+    
+    // Calculate distance from spear tip to target center
+    float distance = norm(spearTip - target.position);
+    
+    // Hit if distance is less than target cell width
+    return distance < cellWidth * scale * 0.8f;
+}
+
 // Function to draw the cell directly on the canvas
-void drawCell(Mat& canvas, const Point2f& cellPosition, const map<string, float>& config, bool faceRight, 
-              float scale, const Vec3b& cellColor, float time, float tailPhaseOffset, float aggressionLevel, bool isPlayerControlled) {
+void drawCell(Mat& canvas, const Cell& cell, const map<string, float>& config, float scale,
+              float time) {
     // Get cell dimensions
     float cellWidth = config.at("cell_width") * scale;
     float cellHeight = config.at("cell_height") * scale;
     
-    Point2f cellPos(cellPosition.x, cellPosition.y);
+    Point2f cellPos(cell.position.x, cell.position.y);
+    bool faceRight = cell.faceRight;
+    Vec3b cellColor = cell.color;
+    float tailPhaseOffset = cell.tailPhaseOffset;
+    float aggressionLevel = cell.aggressionLevel;
 
     // Scale factor for left/right flipped features
     float directionFactor = faceRight ? 1.0f : -1.0f;
-    
     
     // 1) Cell Body (Ellipse)
     ellipse(canvas, Point(static_cast<int>(cellPos.x), static_cast<int>(cellPos.y)), 
@@ -220,11 +302,14 @@ void drawCell(Mat& canvas, const Point2f& cellPosition, const map<string, float>
             Scalar(0, 0, 0), tailThickness, LINE_AA);
     }
 
-        // Draw the spear for player-controlled cell
-    if (isPlayerControlled) {
-        drawSpear(canvas, cellPos, faceRight, scale, cellWidth, cellHeight);
+    // Draw the spear for player-controlled cell with attack animation
+    if (cell.isPlayerControlled) {
+        drawSpear(canvas, cellPos, faceRight, scale, cellWidth, cellHeight, 
+                 cell.isAttacking, cell.attackTime);
     }
-
+    
+    // Draw health bar
+    drawHealthBar(canvas, cellPos, cellWidth, cell.health, cell.maxHealth);
 }
 
 // Function to update cell physics
@@ -288,6 +373,10 @@ int main() {
     const float aggressionChangeAmount = 0.1f; // How much aggression can change at once
     const float maxAggression = 1.0f; // Maximum aggression level
     const float minAggression = 0.0f; // Minimum aggression level
+    
+    // New constants for attack behavior
+    const float attackDuration = 1.0f; // Complete attack animation in 1 second
+    const float attackDamage = 20.0f;  // Base damage for attacks
 
     map<string, float> config = {
         {"cell_width", 100.f}, {"cell_height", 60.f}, // Absolute size for the cell
@@ -322,7 +411,7 @@ int main() {
     // Create AI-controlled cells with random positions, colors and aggression levels
     for (int i = 1; i < numCells; ++i) {
         // Create a slight color variation from the base color
-        Vec3b cellColor = baseColor; // Direct copy instead of clone()
+        Vec3b cellColor = baseColor;
         cellColor[0] = saturate_cast<uchar>(baseColor[0] + colorDist(gen)); // Blue
         cellColor[1] = saturate_cast<uchar>(baseColor[1] + colorDist(gen)); // Green
         cellColor[2] = saturate_cast<uchar>(baseColor[2] + colorDist(gen)); // Red
@@ -338,6 +427,7 @@ int main() {
 
     // For animation timing
     auto startTime = chrono::high_resolution_clock::now();
+    float frameTime = 1.0f / 30.0f; // Target 30 FPS
 
     while (true) {
         try {
@@ -350,8 +440,42 @@ int main() {
             
             // Update and draw each cell
             for (auto& cell : cells) {
+                // Update attack animation if cell is attacking
+                if (cell.isAttacking) {
+                    // Progress the attack animation
+                    cell.attackTime += frameTime / attackDuration;
+                    
+                    // Check if attack animation is complete
+                    if (cell.attackTime >= 1.0f) {
+                        cell.isAttacking = false;
+                        cell.attackTime = 0.0f;
+                    }
+                }
+                
                 if (cell.isPlayerControlled) {
                     // Player cell updates are controlled by keyboard
+                    
+                    // Check for player attacks hitting other cells
+                    if (cell.isAttacking && cell.attackTime < 0.5f) { // Only during forward thrust
+                        for (auto& target : cells) {
+                            // Don't hit self and only hit living cells
+                            if (&target != &cell && target.health > 0) {
+                                if (checkSpearCollision(cell, target, scale, config.at("cell_width"))) {
+                                    // Calculate damage based on player's aggression
+                                    float damage = attackDamage * (1.0f + cell.aggressionLevel * 0.5f);
+                                    target.health -= damage;
+                                    
+                                    // Ensure health doesn't go below 0
+                                    if (target.health < 0) target.health = 0;
+                                    
+                                    // Add knockback effect
+                                    float knockbackStrength = 5.0f;
+                                    target.velocity += knockbackStrength * 
+                                        Point2f(cell.faceRight ? 1.0f : -1.0f, -0.5f);
+                                }
+                            }
+                        }
+                    }
                 } else {
                     // Random movement for AI cells
                     if (probDist(gen) < randomMoveProbability) {
@@ -367,21 +491,26 @@ int main() {
                     }
                 }
                 
-                // Update physics for each cell
-                updateCellPhysics(cell, canvasSize, maxSpeed, drag);
-                
-                // Draw the cell with its unique color, animated tail, and aggression level
-                // Pass the isPlayerControlled flag to determine if spear should be drawn
-                drawCell(canvas, cell.position, config, cell.faceRight, scale, 
-                         cell.color, time, cell.tailPhaseOffset, cell.aggressionLevel, cell.isPlayerControlled);
-                
-                // Add "you" text above player's cell
-                if (cell.isPlayerControlled) {
-                    Point textPos(static_cast<int>(cell.position.x - 10), 
-                                  static_cast<int>(cell.position.y - config.at("cell_height") * scale));
-                    putText(canvas, "you", textPos, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+                // Only update physics for cells with health > 0
+                if (cell.health > 0) {
+                    // Update physics for each cell
+                    updateCellPhysics(cell, canvasSize, maxSpeed, drag);
+                    
+                    // Draw the cell with its unique color, animated tail, and aggression level
+                    drawCell(canvas, cell, config, scale, time);
+                    
+                    // Add "you" text above player's cell
+                    if (cell.isPlayerControlled) {
+                        Point textPos(static_cast<int>(cell.position.x - 10), 
+                                      static_cast<int>(cell.position.y - config.at("cell_height") * scale - 30));
+                        putText(canvas, "you", textPos, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
+                    }
                 }
             }
+    
+            // Display controls
+            putText(canvas, "Controls: WASD to move, J to attack, Q/E to change aggression", 
+                    Point(10, 30), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
     
             imshow("Multi-Cell Simulation", canvas);
     
@@ -404,6 +533,12 @@ int main() {
             } else if (key == 'e') {
                 // Increase player's aggression level
                 cells[0].aggressionLevel = std::min(1.0f, cells[0].aggressionLevel + 0.1f);
+            } else if (key == 'j' || key == 'J') {
+                // Start attack if not already attacking
+                if (!cells[0].isAttacking) {
+                    cells[0].isAttacking = true;
+                    cells[0].attackTime = 0.0f;
+                }
             }
         }
         catch (const cv::Exception& e) {
