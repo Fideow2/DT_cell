@@ -117,24 +117,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named image_processor
+# Target rules for targets named cell
 
 # Build rule for target.
-image_processor: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 image_processor
-.PHONY : image_processor
+cell: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cell
+.PHONY : cell
 
 # fast build rule for target.
-image_processor/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/image_processor.dir/build.make CMakeFiles/image_processor.dir/build
-.PHONY : image_processor/fast
+cell/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/build
+.PHONY : cell/fast
 
 main.o: main.cpp.o
 .PHONY : main.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/image_processor.dir/build.make CMakeFiles/image_processor.dir/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -142,7 +142,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/image_processor.dir/build.make CMakeFiles/image_processor.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -150,7 +150,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/image_processor.dir/build.make CMakeFiles/image_processor.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -161,7 +161,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... image_processor"
+	@echo "... cell"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

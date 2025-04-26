@@ -145,7 +145,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=ImageProcessor
+CMAKE_PROJECT_NAME:STATIC=cell
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -220,6 +220,15 @@ ImageProcessor_SOURCE_DIR:STATIC=/home/fideow/Desktop/qwq/DT_cell/testopencv
 
 //The directory containing a CMake configuration file for OpenCV.
 OpenCV_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/opencv4
+
+//Value Computed by CMake
+cell_BINARY_DIR:STATIC=/home/fideow/Desktop/qwq/DT_cell/testopencv/build
+
+//Value Computed by CMake
+cell_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+cell_SOURCE_DIR:STATIC=/home/fideow/Desktop/qwq/DT_cell/testopencv
 
 
 ########################
