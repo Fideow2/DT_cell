@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -isystem /usr/local/Cellar/opencv/4.11.0_1/include/opencv4
+CXX_INCLUDES = -I/Users/mac/Documents/GitHub/DT_cell -isystem /usr/local/Cellar/opencv/4.11.0_1/include/opencv4
 
 CXX_FLAGS = -std=gnu++20
 

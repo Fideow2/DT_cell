@@ -129,6 +129,30 @@ cell/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/build
 .PHONY : cell/fast
 
+drawing.o: drawing.cpp.o
+.PHONY : drawing.o
+
+# target to build an object file
+drawing.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/drawing.cpp.o
+.PHONY : drawing.cpp.o
+
+drawing.i: drawing.cpp.i
+.PHONY : drawing.i
+
+# target to preprocess a source file
+drawing.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/drawing.cpp.i
+.PHONY : drawing.cpp.i
+
+drawing.s: drawing.cpp.s
+.PHONY : drawing.s
+
+# target to generate assembly for a file
+drawing.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/drawing.cpp.s
+.PHONY : drawing.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -153,6 +177,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+physics.o: physics.cpp.o
+.PHONY : physics.o
+
+# target to build an object file
+physics.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/physics.cpp.o
+.PHONY : physics.cpp.o
+
+physics.i: physics.cpp.i
+.PHONY : physics.i
+
+# target to preprocess a source file
+physics.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/physics.cpp.i
+.PHONY : physics.cpp.i
+
+physics.s: physics.cpp.s
+.PHONY : physics.s
+
+# target to generate assembly for a file
+physics.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/physics.cpp.s
+.PHONY : physics.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -162,9 +210,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... cell"
+	@echo "... drawing.o"
+	@echo "... drawing.i"
+	@echo "... drawing.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... physics.o"
+	@echo "... physics.i"
+	@echo "... physics.s"
 .PHONY : help
 
 
