@@ -20,6 +20,10 @@ void drawBloodDrops(cv::Mat& canvas, const std::vector<BloodDrop>& bloodDrops);
 void drawSpear(cv::Mat& canvas, const cv::Point2f& cellPosition, bool faceRight, float scale,
                float cellWidth, float cellHeight, bool isAttacking, float attackTime);
 
+// Function to draw shield
+void drawShield(cv::Mat& canvas, const cv::Point2f& cellPosition, bool faceRight, float scale,
+               float cellWidth, float cellHeight, bool isShielding, float shieldTime, bool hasParried);
+
 // Function to draw health bar
 void drawHealthBar(cv::Mat& canvas, const cv::Point2f& position,
                   float cellWidth, float health, float maxHealth);
@@ -27,5 +31,11 @@ void drawHealthBar(cv::Mat& canvas, const cv::Point2f& position,
 // Function to draw the cell directly on the canvas
 void drawCell(cv::Mat& canvas, const Cell& cell, const std::map<std::string, float>& config,
              float scale, float time);
+
+// Load shield image
+void loadShieldImage();
+
+// Get shield image reference
+cv::Mat& getShieldImage();
 
 #endif // DRAWING_H

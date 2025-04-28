@@ -15,26 +15,30 @@ using namespace std;
 
 // === Main Program ===
 int main() {
-    // Constants
+    // Constants - Optimized values for better movement
     const float scale = 0.4f;  // Scale factor to make cells smaller
     const int numCells = 20;   // Total number of cells (including 2 player-controlled cells)
-    const float maxSpeed = 5.0f;
-    const float accelerationStep = 0.5f;
-    const float drag = 0.98f; // Water resistance
+    const float maxSpeed = 6.0f;  // Increased max speed for more responsive movement
+    const float accelerationStep = 0.7f;  // Increased acceleration for more responsive controls
+    const float drag = 0.94f; // Less drag for smoother movement (was 0.98)
     const float randomMoveProbability = 0.05f; // Probability of random movement change
     const float randomMoveStrength = 0.3f; // Strength of random movements
     const Vec3b baseColor(200, 230, 255); // Base cell color (BGR)
     const Vec3b player2Color(200, 255, 220); // Different color for player 2 (more greenish)
 
-    // New constants for aggression behavior
+    // Constants for aggression behavior
     const float aggressionChangeProbability = 0.01f; // Probability of changing aggression
     const float aggressionChangeAmount = 0.1f; // How much aggression can change at once
     const float maxAggression = 1.0f; // Maximum aggression level
     const float minAggression = 0.0f; // Minimum aggression level
 
-    // New constants for attack behavior
-    const float attackDuration = 1.0f; // Complete attack animation in 1 second
+    // Constants for attack behavior - faster attacks for more responsive gameplay
+    const float attackDuration = 0.5f; // Reduced attack animation time (was 1.0f)
     const float attackDamage = 8.0f;  // Base damage for attacks
+
+    // New constants for shield behavior
+    const float parryWindowDuration = 0.2f; // Time window for perfect parry (in seconds)
+    const float shieldCooldown = 0.3f; // Cooldown time between shield uses
 
     map<string, float> config = {
         {"cell_width", 100.f}, {"cell_height", 60.f}, // Absolute size for the cell
@@ -48,6 +52,9 @@ int main() {
     };
 
     Size canvasSize(800, 600);
+
+    // Load the shield image
+    loadShieldImage();
 
     // Create random number generator for cell positions, movements and colors
     random_device rd;
@@ -63,10 +70,10 @@ int main() {
     // Create cells - first two are player-controlled
     vector<Cell> cells;
 
-    // Create player 1 cell (WASD controls, F attack)
+    // Create player 1 cell (WASD controls, F attack, G shield)
     cells.emplace_back(Point2f(canvasSize.width/3, canvasSize.height/2), true, 1, baseColor, 0.0f, 0.0f);
 
-    // Create player 2 cell (Arrow key controls, / attack)
+    // Create player 2 cell (Arrow key controls, / attack, . shield)
     cells.emplace_back(Point2f(canvasSize.width*2/3, canvasSize.height/2), true, 2, player2Color, phaseDist(gen), 0.0f);
 
     // Create AI-controlled cells with random positions, colors and aggression levels
@@ -89,10 +96,14 @@ int main() {
     // For animation timing
     auto startTime = chrono::high_resolution_clock::now();
     auto lastUpdateTime = startTime;
-    float frameTime = 1.0f / 30.0f; // Target 30 FPS
+    float frameTime = 1.0f / 60.0f; // Target 60 FPS (was 30)
 
     // Keyboard code storage
     int key;
+
+    // Shield cooldown timers for players
+    float player1ShieldCooldown = 0.0f;
+    float player2ShieldCooldown = 0.0f;
 
     while (true) {
         try {
@@ -101,6 +112,10 @@ int main() {
             float time = chrono::duration<float>(currentTime - startTime).count();
             float deltaTime = chrono::duration<float>(currentTime - lastUpdateTime).count();
             lastUpdateTime = currentTime;
+
+            // Update shield cooldowns
+            player1ShieldCooldown = max(0.0f, player1ShieldCooldown - deltaTime);
+            player2ShieldCooldown = max(0.0f, player2ShieldCooldown - deltaTime);
 
             // Create canvas with white background
             Mat canvas = Mat(canvasSize, CV_8UC3, Scalar(255, 255, 255));
@@ -129,8 +144,22 @@ int main() {
                             if (&target != &cell && target.health > 0) {
                                 Point2f hitPosition;
                                 Point2f spearTipPosition;
-                                if (checkSpearCollision(cell, target, scale, config.at("cell_width"),
-                                                      hitPosition, spearTipPosition)) {
+                                bool hit = checkSpearCollision(cell, target, scale, config.at("cell_width"),
+                                                    hitPosition, spearTipPosition);
+
+                                // Check if the target is shielding and can block
+                                bool perfectParry = false;
+                                if (hit && checkShieldBlock(target, cell, scale, config.at("cell_width"), perfectParry)) {
+                                    // Attack blocked by shield
+                                    if (perfectParry) {
+                                        // Perfect parry - create parry effect and don't apply damage
+                                        createParryEffect(cell, target);
+                                    } else {
+                                        // Regular shield block - just cancel the attack
+                                        cell.isAttacking = false;
+                                        cell.attackTime = 0.0f;
+                                    }
+                                } else if (hit) {
                                     // Calculate damage based on player's aggression
                                     float damage = attackDamage * (1.0f + cell.aggressionLevel * 0.5f);
                                     target.health -= damage;
@@ -175,20 +204,20 @@ int main() {
             }
 
             // Display controls
-            putText(canvas, "Player 1: WASD to move, F to attack, Q/E to change aggression",
+            putText(canvas, "Player 1: WASD to move, F to attack, G to shield, Q/E to change aggression",
                     Point(10, 30), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
-            putText(canvas, "Player 2: Arrow keys to move, / to attack",
+            putText(canvas, "Player 2: Arrow keys to move, / to attack, . to shield",
                     Point(10, 50), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
 
             imshow("Multi-Cell Simulation", canvas);
 
             // Handle keyboard input for both players
-            key = waitKey(30); // Wait for 30ms
+            key = waitKey(16); // Wait for 16ms (targeting ~60fps)
             if (key == 27) { // ESC key
                 break;
             }
 
-            // Player 1 controls (WASD, Q/E for aggression, F for attack)
+            // Player 1 controls (WASD, Q/E for aggression, F for attack, G for shield)
             if (key == 'w' || key == 'W') {
                 cells[0].acceleration.y -= accelerationStep;
             }
@@ -209,33 +238,68 @@ int main() {
             if (key == 'e' || key == 'E') {
                 cells[0].aggressionLevel = std::min(1.0f, cells[0].aggressionLevel + 0.1f);
             }
-            if (key == 'f' || key == 'F') {
+            if ((key == 'f' || key == 'F') && !cells[0].isShielding) {
                 if (!cells[0].isAttacking) {
                     cells[0].isAttacking = true;
                     cells[0].attackTime = 0.0f;
                 }
             }
+            if ((key == 'g' || key == 'G') && player1ShieldCooldown <= 0) {
+                // Toggle shield
+                cells[0].isShielding = !cells[0].isShielding;
 
-            // Player 2 controls (Arrow keys for movement, / for attack)
-            // Note: Arrow key codes can vary across platforms
-            if (key == 82 || key == 2490368) { // UP arrow
+                if (cells[0].isShielding) {
+                    cells[0].shieldTime = 0.0f; // Reset shield time for parry window
+                } else {
+                    // Apply cooldown when shield is put down
+                    player1ShieldCooldown = shieldCooldown;
+
+                    // Cancel any attack if putting up shield
+                    if (cells[0].isAttacking) {
+                        cells[0].isAttacking = false;
+                        cells[0].attackTime = 0.0f;
+                    }
+                }
+            }
+
+            // Player 2 controls using proper OpenCV key codes
+            // Using more universal key codes for arrow keys
+            if (key == 82 || key == 0x260000) { // UP arrow
                 cells[1].acceleration.y -= accelerationStep;
             }
-            if (key == 84 || key == 2621440) { // DOWN arrow
+            if (key == 84 || key == 0x280000) { // DOWN arrow
                 cells[1].acceleration.y += accelerationStep;
             }
-            if (key == 81 || key == 2424832) { // LEFT arrow
+            if (key == 81 || key == 0x250000) { // LEFT arrow
                 cells[1].acceleration.x -= accelerationStep;
                 cells[1].faceRight = false;
             }
-            if (key == 83 || key == 2555904) { // RIGHT arrow
+            if (key == 83 || key == 0x270000) { // RIGHT arrow
                 cells[1].acceleration.x += accelerationStep;
                 cells[1].faceRight = true;
             }
-            if (key == '/' || key == 47) {
+            if ((key == '/' || key == 47) && !cells[1].isShielding) {
                 if (!cells[1].isAttacking) {
                     cells[1].isAttacking = true;
                     cells[1].attackTime = 0.0f;
+                }
+            }
+            // Use period (.) key for player 2 shield
+            if ((key == '.' || key == 46) && player2ShieldCooldown <= 0) {
+                // Toggle shield
+                cells[1].isShielding = !cells[1].isShielding;
+
+                if (cells[1].isShielding) {
+                    cells[1].shieldTime = 0.0f; // Reset shield time for parry window
+                } else {
+                    // Apply cooldown when shield is put down
+                    player2ShieldCooldown = shieldCooldown;
+
+                    // Cancel any attack if putting up shield
+                    if (cells[1].isAttacking) {
+                        cells[1].isAttacking = false;
+                        cells[1].attackTime = 0.0f;
+                    }
                 }
             }
         }

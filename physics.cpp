@@ -106,6 +106,70 @@ bool checkSpearCollision(const Cell& attacker, const Cell& target, float scale, 
     return distance < cellWidth * scale * 0.8f;
 }
 
+// Function to check if a shield blocks an attack
+bool checkShieldBlock(const Cell& defender, const Cell& attacker, float scale, float cellWidth,
+                      bool& perfectParry) {
+    // No block if not shielding
+    if (!defender.isShielding) {
+        perfectParry = false;
+        return false;
+    }
+
+    // No block if attacker is not attacking
+    if (!attacker.isAttacking || attacker.attackTime >= 0.5f) {
+        perfectParry = false;
+        return false;
+    }
+
+    // Direction factors
+    float attackerDirFactor = attacker.faceRight ? 1.0f : -1.0f;
+    float defenderDirFactor = defender.faceRight ? 1.0f : -1.0f;
+
+    // Calculate spear tip position with attack extension
+    float attackExtension = attacker.attackTime * 2.0f * 50.0f * scale;
+    float spearLength = 100.0f * scale;
+    float spearTipX = attacker.position.x + attackerDirFactor * (spearLength * 1.5f + attackExtension);
+    float spearTipY = attacker.position.y + 60.0f * scale - spearLength * 0.3f;
+    Point2f spearTip(spearTipX, spearTipY);
+
+    // Calculate shield position
+    Point2f shieldPos = defender.position;
+    shieldPos.x += -defenderDirFactor * cellWidth * 0.6f * scale; // Shield on opposite side of facing direction
+
+    // Calculate distance from spear tip to shield
+    float distance = norm(spearTip - shieldPos);
+
+    // Shield radius
+    float shieldRadius = cellWidth * scale * 0.6f;
+
+    // Check for collision
+    bool blocked = distance < shieldRadius;
+
+    // Check for perfect parry timing (within first 0.2s of shield activation)
+    perfectParry = blocked && defender.shieldTime < 0.2f;
+
+    return blocked;
+}
+
+// Function to create parry effect
+void createParryEffect(Cell& attacker, Cell& defender) {
+    // Knock attacker back
+    float knockbackStrength = 10.0f;
+    float directionFactor = attacker.faceRight ? -1.0f : 1.0f; // Knocked back in opposite direction
+    attacker.velocity.x += directionFactor * knockbackStrength;
+
+    // Visual parry effect for defender
+    defender.hasParried = true;
+    defender.parryTime = 0.0f; // Reset parry effect timer
+
+    // Cancel attacker's attack animation
+    attacker.isAttacking = false;
+    attacker.attackTime = 0.0f;
+
+    // Stun attacker (slow them down)
+    attacker.velocity *= 0.2f; // Reduce velocity to 20%
+}
+
 // Function to update cell physics
 void updateCellPhysics(Cell& cell, const Size& canvasSize, float maxSpeed, float drag, float deltaTime) {
     // Update velocity based on acceleration
@@ -147,6 +211,23 @@ void updateCellPhysics(Cell& cell, const Size& canvasSize, float maxSpeed, float
         cell.faceRight = true;
     } else if (cell.velocity.x < -0.5f) {
         cell.faceRight = false;
+    }
+
+    // Update shield time if shielding
+    if (cell.isShielding) {
+        cell.shieldTime += deltaTime;
+    } else {
+        cell.shieldTime = 0.0f;
+    }
+
+    // Update parry effect time
+    if (cell.hasParried) {
+        cell.parryTime += deltaTime;
+        // Parry effect lasts for 0.5 seconds
+        if (cell.parryTime >= 0.5f) {
+            cell.hasParried = false;
+            cell.parryTime = 0.0f;
+        }
     }
 
     // Update blood drops physics

@@ -40,6 +40,12 @@ struct Cell {
     bool isAttacking;    // Whether the cell is currently attacking
     float attackTime;    // Time tracker for attack animation
 
+    // Shield properties
+    bool isShielding;    // Whether the cell is currently holding shield
+    float shieldTime;    // Time tracker for shield animation and parry window
+    bool hasParried;     // Whether a successful parry just occurred
+    float parryTime;     // Time tracker for parry effect
+
     // Blood effect properties
     std::vector<BloodDrop> bloodDrops;
 
@@ -57,7 +63,11 @@ struct Cell {
         health(100.0f),
         maxHealth(100.0f),
         isAttacking(false),
-        attackTime(0.0f) {}
+        attackTime(0.0f),
+        isShielding(false),
+        shieldTime(0.0f),
+        hasParried(false),
+        parryTime(0.0f) {}
 };
 
 #endif // STRUCTS_H

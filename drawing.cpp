@@ -4,6 +4,28 @@
 using namespace cv;
 using namespace std;
 
+// Static shield image
+static Mat shieldImage;
+
+// Load shield image
+void loadShieldImage() {
+    char image_dir[] = "../assets/shield.png";
+    shieldImage = imread(image_dir, IMREAD_UNCHANGED);
+    if(shieldImage.empty())
+        throw runtime_error("\n Could not load shield image: " + string(image_dir));
+    // if (shieldImage.empty()) {
+    //     cerr << "Warning: Could not load shield image (assets/shield.png)" << endl;
+    //     // Create a default shield if image can't be loaded
+    //     shieldImage = Mat(100, 100, CV_8UC4, Scalar(0, 0, 128, 200));
+    //     ellipse(shieldImage, Point(50, 50), Size(40, 40), 0, 0, 360, Scalar(0, 0, 255, 255), 3);
+    // }
+}
+
+// Get shield image reference
+Mat& getShieldImage() {
+    return shieldImage;
+}
+
 // Function to compute Bezier curve points
 Point2f bezierPoint(const vector<Point2f>& controlPoints, float t) {
     int n = controlPoints.size() - 1;
@@ -117,6 +139,104 @@ void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float s
 
     // Draw filled triangle
     fillConvexPoly(canvas, spearheadPoints, 3, Scalar(0, 0, 0), LINE_AA);
+}
+
+// Function to draw shield
+void drawShield(Mat& canvas, const Point2f& cellPosition, bool faceRight, float scale,
+               float cellWidth, float cellHeight, bool isShielding, float shieldTime, bool hasParried) {
+    if (!isShielding && !hasParried) return;
+
+    // Scale factor for left/right direction
+    float directionFactor = faceRight ? -1.0f : 1.0f; // Shield is on opposite side of facing direction
+
+    // Shield size and position parameters
+    float shieldWidth = 100.0f * scale;
+    float shieldHeight = 140.0f * scale;
+
+    // Position shield on the opposite side of facing direction
+    Point2f shieldPos(
+        cellPosition.x - directionFactor * cellWidth * 0.6f,
+        cellPosition.y + cellHeight * 0.4f
+    );
+
+    // Check if we have the shield image or use a placeholder
+    if (getShieldImage().empty()) {
+        // Draw a simple elliptical shield if no image
+        Scalar shieldColor = hasParried ? Scalar(0, 255, 255, 200) : Scalar(0, 0, 255, 150); // Yellow for parry, blue for normal
+        ellipse(canvas,
+            Point(static_cast<int>(shieldPos.x), static_cast<int>(shieldPos.y)),
+            Size(static_cast<int>(shieldWidth/2), static_cast<int>(shieldHeight/2)),
+            0, 0, 360, shieldColor, FILLED, LINE_AA);
+
+        // Draw shield border
+        ellipse(canvas,
+            Point(static_cast<int>(shieldPos.x), static_cast<int>(shieldPos.y)),
+            Size(static_cast<int>(shieldWidth/2), static_cast<int>(shieldHeight/2)),
+            0, 0, 360, Scalar(50, 50, 50), 2, LINE_AA);
+    } else {
+        // Prepare the shield image with appropriate scaling and rotation
+        Mat shieldImg = getShieldImage().clone();
+
+        // Resize the shield image to the appropriate size
+        Mat resizedShield;
+        resize(shieldImg, resizedShield, Size(static_cast<int>(shieldWidth), static_cast<int>(shieldHeight)));
+
+        // Create a region of interest in the canvas
+        Rect roi(
+            static_cast<int>(shieldPos.x - shieldWidth/2),
+            static_cast<int>(shieldPos.y - shieldHeight/2),
+            static_cast<int>(shieldWidth),
+            static_cast<int>(shieldHeight)
+        );
+
+        // Ensure the ROI is within the canvas bounds
+        roi = roi & Rect(0, 0, canvas.cols, canvas.rows);
+
+        if (roi.width > 0 && roi.height > 0) {
+            // If we have a 4-channel image with alpha, handle transparency
+            if (resizedShield.channels() == 4) {
+                // Apply alpha blending
+                for (int y = 0; y < roi.height; ++y) {
+                    for (int x = 0; x < roi.width; ++x) {
+                        int srcX = x + roi.x - (static_cast<int>(shieldPos.x - shieldWidth/2));
+                        int srcY = y + roi.y - (static_cast<int>(shieldPos.y - shieldHeight/2));
+
+                        if (srcX >= 0 && srcX < resizedShield.cols && srcY >= 0 && srcY < resizedShield.rows) {
+                            Vec4b& shieldPixel = resizedShield.at<Vec4b>(srcY, srcX);
+                            Vec3b& canvasPixel = canvas.at<Vec3b>(y + roi.y, x + roi.x);
+
+                            // Apply alpha blending and a parry glow effect if needed
+                            float alpha = shieldPixel[3] / 255.0f;
+                            if (hasParried) {
+                                // Add a yellow glow for parry effect
+                                canvasPixel[0] = saturate_cast<uchar>((1 - alpha) * canvasPixel[0] + alpha * min(255.0f, shieldPixel[0] * 1.5f));
+                                canvasPixel[1] = saturate_cast<uchar>((1 - alpha) * canvasPixel[1] + alpha * min(255.0f, shieldPixel[1] * 1.5f));
+                                canvasPixel[2] = saturate_cast<uchar>((1 - alpha) * canvasPixel[2] + alpha * 255); // Strong red component
+                            } else {
+                                canvasPixel[0] = saturate_cast<uchar>((1 - alpha) * canvasPixel[0] + alpha * shieldPixel[0]);
+                                canvasPixel[1] = saturate_cast<uchar>((1 - alpha) * canvasPixel[1] + alpha * shieldPixel[1]);
+                                canvasPixel[2] = saturate_cast<uchar>((1 - alpha) * canvasPixel[2] + alpha * shieldPixel[2]);
+                            }
+                        }
+                    }
+                }
+            } else {
+                // If no alpha channel, just copy the shield image
+                Mat shieldRoi = resizedShield(Rect(0, 0, roi.width, roi.height));
+                shieldRoi.copyTo(canvas(roi));
+            }
+        }
+    }
+
+    // Add visual feedback for parry timing - flash a ring around the shield
+    if (hasParried) {
+        int pulseRadius = static_cast<int>(shieldWidth * (1.0f + 0.3f * sin(shieldTime * 10.0f)));
+        circle(canvas,
+               Point(static_cast<int>(shieldPos.x), static_cast<int>(shieldPos.y)),
+               pulseRadius,
+               Scalar(0, 255, 255), // Yellow
+               3, LINE_AA);
+    }
 }
 
 // Function to draw health bar
@@ -287,14 +407,20 @@ void drawCell(Mat& canvas, const Cell& cell, const map<string, float>& config, f
             Scalar(0, 0, 0), tailThickness, LINE_AA);
     }
 
-    // Draw the spear for player-controlled cells
-    if (cell.isPlayerControlled) {
+    // Draw blood drops for this cell
+    drawBloodDrops(canvas, cell.bloodDrops);
+
+    // Draw the shield if the cell is shielding
+    if (cell.isShielding || cell.hasParried) {
+        drawShield(canvas, cellPos, faceRight, scale, cellWidth, cellHeight,
+                 cell.isShielding, cell.parryTime, cell.hasParried);
+    }
+
+    // Draw the spear for player-controlled cells - only draw if not shielding
+    if (cell.isPlayerControlled && !cell.isShielding) {
         drawSpear(canvas, cellPos, faceRight, scale, cellWidth, cellHeight,
                  cell.isAttacking, cell.attackTime);
     }
-
-    // Draw blood drops for this cell
-    drawBloodDrops(canvas, cell.bloodDrops);
 
     // Draw health bar
     drawHealthBar(canvas, cellPos, cellWidth, cell.health, cell.maxHealth);

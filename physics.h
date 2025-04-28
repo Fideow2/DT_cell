@@ -17,4 +17,11 @@ void updateCellPhysics(Cell& cell, const cv::Size& canvasSize, float maxSpeed, f
 bool checkSpearCollision(const Cell& attacker, const Cell& target, float scale, float cellWidth,
                          cv::Point2f& hitPosition, cv::Point2f& spearTipPosition);
 
+// Function to check if a shield blocks an attack
+bool checkShieldBlock(const Cell& defender, const Cell& attacker, float scale, float cellWidth,
+                      bool& perfectParry);
+
+// Function to create parry effect
+void createParryEffect(Cell& attacker, Cell& defender);
+
 #endif // PHYSICS_H
