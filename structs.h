@@ -45,6 +45,9 @@ struct Cell {
     float shieldTime;    // Time tracker for shield animation and parry window
     bool hasParried;     // Whether a successful parry just occurred
     float parryTime;     // Time tracker for parry effect
+    float shieldDuration; // Maximum time shield can be held up
+    float shieldCooldownTime; // Current cooldown time remaining
+    float damageReduction; // Damage reduction while shielding (0-1)
 
     // Blood effect properties
     std::vector<BloodDrop> bloodDrops;
@@ -67,7 +70,10 @@ struct Cell {
         isShielding(false),
         shieldTime(0.0f),
         hasParried(false),
-        parryTime(0.0f) {}
+        parryTime(0.0f),
+        shieldDuration(2.0f), // Shield lasts 2 seconds by default
+        shieldCooldownTime(0.0f),
+        damageReduction(0.75f) {} // 75% damage reduction while shielding
 };
 
 #endif // STRUCTS_H

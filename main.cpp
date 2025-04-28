@@ -37,8 +37,10 @@ int main() {
     const float attackDamage = 8.0f;  // Base damage for attacks
 
     // New constants for shield behavior
-    const float parryWindowDuration = 0.2f; // Time window for perfect parry (in seconds)
+    const float parryWindowDuration = 0.05f; // Time window for perfect parry (in seconds) - 50ms
     const float shieldCooldown = 0.3f; // Cooldown time between shield uses
+    const float shieldDuration = 2.0f; // Time shield stays up before auto-lowering
+    const float damageReduction = 0.5f; // Damage reduction while shielding (50%)
 
     map<string, float> config = {
         {"cell_width", 100.f}, {"cell_height", 60.f}, // Absolute size for the cell
@@ -72,9 +74,13 @@ int main() {
 
     // Create player 1 cell (WASD controls, F attack, G shield)
     cells.emplace_back(Point2f(canvasSize.width/3, canvasSize.height/2), true, 1, baseColor, 0.0f, 0.0f);
+    cells[0].shieldDuration = shieldDuration;
+    cells[0].damageReduction = damageReduction;
 
     // Create player 2 cell (Arrow key controls, / attack, . shield)
     cells.emplace_back(Point2f(canvasSize.width*2/3, canvasSize.height/2), true, 2, player2Color, phaseDist(gen), 0.0f);
+    cells[1].shieldDuration = shieldDuration;
+    cells[1].damageReduction = damageReduction;
 
     // Create AI-controlled cells with random positions, colors and aggression levels
     for (int i = 2; i < numCells; ++i) {
@@ -155,9 +161,21 @@ int main() {
                                         // Perfect parry - create parry effect and don't apply damage
                                         createParryEffect(cell, target);
                                     } else {
-                                        // Regular shield block - just cancel the attack
+                                        // Regular shield block - just cancel the attack and apply reduced damage
                                         cell.isAttacking = false;
                                         cell.attackTime = 0.0f;
+
+                                        // Apply reduced damage when blocking with shield
+                                        float damage = attackDamage * (1.0f + cell.aggressionLevel * 0.5f);
+                                        damage *= (1.0f - target.damageReduction); // Reduce damage by shield
+                                        target.health -= damage;
+
+                                        // Ensure health doesn't go below 0
+                                        if (target.health < 0) target.health = 0;
+
+                                        // Create smaller blood effect for reduced damage
+                                        Point2f reducedHitPos = target.position;
+                                        createBloodEffect(target, reducedHitPos, cell.faceRight, spearTipPosition);
                                     }
                                 } else if (hit) {
                                     // Calculate damage based on player's aggression
@@ -301,6 +319,25 @@ int main() {
                         cells[1].attackTime = 0.0f;
                     }
                 }
+            }
+
+            // Display shield cooldown and status 
+            for (int i = 0; i < 2; i++) {
+                string shieldStatus;
+                if (cells[i].isShielding) {
+                    float remainingTime = cells[i].shieldDuration - cells[i].shieldTime;
+                    shieldStatus = "Shield: " + to_string(int(remainingTime * 10) / 10.0) + "s";
+                    if (cells[i].shieldTime < parryWindowDuration) {
+                        shieldStatus += " (PERFECT PARRY)";
+                    }
+                } else if (cells[i].shieldCooldownTime > 0) {
+                    shieldStatus = "Shield CD: " + to_string(int(cells[i].shieldCooldownTime * 10) / 10.0) + "s";
+                } else {
+                    shieldStatus = "Shield Ready";
+                }
+
+                putText(canvas, shieldStatus, 
+                        Point(10, 70 + i*20), FONT_HERSHEY_SIMPLEX, 0.4, Scalar(0, 0, 0), 1, LINE_AA);
             }
         }
         catch (const cv::Exception& e) {

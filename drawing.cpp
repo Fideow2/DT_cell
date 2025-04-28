@@ -142,7 +142,7 @@ void drawSpear(Mat& canvas, const Point2f& cellPosition, bool faceRight, float s
 }
 
 // Function to draw shield
-void drawShield(Mat& canvas, const Point2f& cellPosition, bool faceRight, float scale,
+void drawShield(cv::Mat& canvas, const Point2f& cellPosition, bool faceRight, float scale,
                float cellWidth, float cellHeight, bool isShielding, float shieldTime, bool hasParried) {
     if (!isShielding && !hasParried) return;
 
@@ -236,6 +236,15 @@ void drawShield(Mat& canvas, const Point2f& cellPosition, bool faceRight, float 
                pulseRadius,
                Scalar(0, 255, 255), // Yellow
                3, LINE_AA);
+    }
+    
+    // Add visual feedback for perfect parry window (first 50ms)
+    if (isShielding && shieldTime < 0.05f) {
+        circle(canvas,
+               Point(static_cast<int>(shieldPos.x), static_cast<int>(shieldPos.y)),
+               static_cast<int>(shieldWidth * 0.7f),
+               Scalar(0, 255, 255), // Yellow for perfect parry window
+               2, LINE_AA);
     }
 }
 

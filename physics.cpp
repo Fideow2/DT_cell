@@ -145,8 +145,8 @@ bool checkShieldBlock(const Cell& defender, const Cell& attacker, float scale, f
     // Check for collision
     bool blocked = distance < shieldRadius;
 
-    // Check for perfect parry timing (within first 0.2s of shield activation)
-    perfectParry = blocked && defender.shieldTime < 0.2f;
+    // Check for perfect parry timing (within first 0.4s of shield activation - 400ms window)
+    perfectParry = blocked && defender.shieldTime < 0.4f;
 
     return blocked;
 }
@@ -165,6 +165,16 @@ void createParryEffect(Cell& attacker, Cell& defender) {
     // Cancel attacker's attack animation
     attacker.isAttacking = false;
     attacker.attackTime = 0.0f;
+
+    // Deal reflected damage to attacker (double the base damage)
+    const float reflectedDamage = 16.0f; // Base attack damage * 2
+    attacker.health -= reflectedDamage;
+    if (attacker.health < 0) attacker.health = 0;
+
+    // Create blood effect on the attacker (they're damaged by parry)
+    Point2f hitPosition = attacker.position;
+    Point2f spearTipPosition = attacker.position + Point2f(directionFactor * 30.0f, 0);
+    createBloodEffect(attacker, hitPosition, !attacker.faceRight, spearTipPosition);
 
     // Stun attacker (slow them down)
     attacker.velocity *= 0.2f; // Reduce velocity to 20%
@@ -216,8 +226,20 @@ void updateCellPhysics(Cell& cell, const Size& canvasSize, float maxSpeed, float
     // Update shield time if shielding
     if (cell.isShielding) {
         cell.shieldTime += deltaTime;
+
+        // Auto lower shield after duration expires
+        if (cell.shieldTime >= cell.shieldDuration) {
+            cell.isShielding = false;
+            cell.shieldTime = 0.0f;
+            cell.shieldCooldownTime = 0.3f; // Apply cooldown when shield is auto-lowered
+        }
     } else {
         cell.shieldTime = 0.0f;
+    }
+
+    // Update shield cooldown
+    if (cell.shieldCooldownTime > 0) {
+        cell.shieldCooldownTime = std::max(0.0f, cell.shieldCooldownTime - deltaTime);
     }
 
     // Update parry effect time
