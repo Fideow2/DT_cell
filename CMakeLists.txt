@@ -19,6 +19,10 @@ set(SOURCES
     main.cpp
     drawing.cpp
     physics.cpp
+    GameEngine.cpp
+    entities/BaseCell.cpp
+    entities/PlayerCell.cpp
+    entities/AICell.cpp
 )
 
 # 添加可执行文件

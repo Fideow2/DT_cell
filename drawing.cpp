@@ -1,4 +1,5 @@
 #include "drawing.h"
+#include "entities/BaseCell.h"
 #include <cmath>
 
 using namespace cv;
@@ -280,17 +281,17 @@ void drawHealthBar(Mat& canvas, const Point2f& position, float cellWidth, float 
 }
 
 // Function to draw the cell directly on the canvas
-void drawCell(Mat& canvas, const Cell& cell, const map<string, float>& config, float scale,
+void drawCell(Mat& canvas, const BaseCell& cell, const map<string, float>& config, float scale,
               float time) {
     // Get cell dimensions
     float cellWidth = config.at("cell_width") * scale;
     float cellHeight = config.at("cell_height") * scale;
 
-    Point2f cellPos(cell.position.x, cell.position.y);
-    bool faceRight = cell.faceRight;
-    Vec3b cellColor = cell.color;
-    float tailPhaseOffset = cell.tailPhaseOffset;
-    float aggressionLevel = cell.aggressionLevel;
+    Point2f cellPos(cell.getPosition().x, cell.getPosition().y);
+    bool faceRight = cell.isFacingRight();
+    Vec3b cellColor = cell.getColor();
+    float tailPhaseOffset = cell.getTailPhaseOffset();
+    float aggressionLevel = cell.getAggressionLevel();
 
     // Scale factor for left/right flipped features
     float directionFactor = faceRight ? 1.0f : -1.0f;
@@ -417,28 +418,29 @@ void drawCell(Mat& canvas, const Cell& cell, const map<string, float>& config, f
     }
 
     // Draw blood drops for this cell
-    drawBloodDrops(canvas, cell.bloodDrops);
+    drawBloodDrops(canvas, cell.getBloodDrops());
 
     // Draw the shield if the cell is shielding
-    if (cell.isShielding || cell.hasParried) {
+    if (cell.isShielding() || cell.hasParried()) {
         drawShield(canvas, cellPos, faceRight, scale, cellWidth, cellHeight,
-                 cell.isShielding, cell.parryTime, cell.hasParried);
+                 cell.isShielding(), cell.getParryTime(), cell.hasParried());
     }
 
     // Draw the spear for player-controlled cells - only draw if not shielding
-    if (cell.isPlayerControlled && !cell.isShielding) {
+    int playerNum = cell.getPlayerNumber();
+    if (playerNum > 0 && !cell.isShielding()) {
         drawSpear(canvas, cellPos, faceRight, scale, cellWidth, cellHeight,
-                 cell.isAttacking, cell.attackTime);
+                 cell.isAttacking(), cell.getAttackTime());
     }
 
     // Draw health bar
-    drawHealthBar(canvas, cellPos, cellWidth, cell.health, cell.maxHealth);
+    drawHealthBar(canvas, cellPos, cellWidth, cell.getHealth(), cell.getMaxHealth());
 
     // Add player identification text
-    if (cell.isPlayerControlled) {
-        string playerText = "player " + to_string(cell.playerNumber);
-        Point textPos(static_cast<int>(cell.position.x - 25),
-                      static_cast<int>(cell.position.y - config.at("cell_height") * scale - 30));
+    if (playerNum > 0) {
+        string playerText = "player " + to_string(playerNum);
+        Point textPos(static_cast<int>(cell.getPosition().x - 25),
+                      static_cast<int>(cell.getPosition().y - config.at("cell_height") * scale - 30));
         putText(canvas, playerText, textPos, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
     }
 }

@@ -1,6 +1,7 @@
 #include "physics.h"
 #include <random>
 #include <algorithm> // for std::clamp
+#include "entities/BaseCell.h"
 
 using namespace cv;
 using namespace std;
@@ -32,7 +33,7 @@ void updateBloodDrops(vector<BloodDrop>& bloodDrops, float deltaTime) {
 }
 
 // Function to create blood splash effect at a specific position
-void createBloodEffect(Cell& cell, const Point2f& hitPosition, bool faceRight, const Point2f& spearTipPosition) {
+void createBloodEffect(BaseCell& cell, const Point2f& hitPosition, bool faceRight, const Point2f& spearTipPosition) {
     // Direction factor based on facing direction
     float directionFactor = faceRight ? 1.0f : -1.0f;
 
@@ -75,28 +76,29 @@ void createBloodEffect(Cell& cell, const Point2f& hitPosition, bool faceRight, c
     // Calculate the rotation angle so that the pointed end of the blood drop points AWAY from the spear
     float rotation = atan2(directionVector.y, directionVector.x) - CV_PI/2;
 
-    cell.bloodDrops.emplace_back(dropPosition, Point2f(vx, vy), size, lifetime, rotation);
+    // 使用新添加的方法添加血滴效果
+    cell.addBloodDrop(dropPosition, Point2f(vx, vy), size, lifetime, rotation);
 }
 
 // Function to check if a spear attack hits another cell
-bool checkSpearCollision(const Cell& attacker, const Cell& target, float scale, float cellWidth,
+bool checkSpearCollision(const BaseCell& attacker, const BaseCell& target, float scale, float cellWidth,
                          Point2f& hitPosition, Point2f& spearTipPosition) {
-    if (!attacker.isAttacking || attacker.attackTime >= 0.5f) {
+    if (!attacker.isAttacking() || attacker.getAttackTime() >= 0.5f) {
         return false; // Only check during forward thrust
     }
 
     // Direction facing
-    float directionFactor = attacker.faceRight ? 1.0f : -1.0f;
+    float directionFactor = attacker.isFacingRight() ? 1.0f : -1.0f;
 
     // Calculate spear tip position with attack extension
-    float attackExtension = attacker.attackTime * 2.0f * 50.0f * scale;
+    float attackExtension = attacker.getAttackTime() * 2.0f * 50.0f * scale;
     float spearLength = 100.0f * scale;
-    float spearTipX = attacker.position.x + directionFactor * (spearLength * 1.5f + attackExtension);
-    float spearTipY = attacker.position.y + 60.0f * scale - spearLength * 0.3f;
+    float spearTipX = attacker.getPosition().x + directionFactor * (spearLength * 1.5f + attackExtension);
+    float spearTipY = attacker.getPosition().y + 60.0f * scale - spearLength * 0.3f;
     Point2f spearTip(spearTipX, spearTipY);
 
     // Calculate distance from spear tip to target center
-    float distance = norm(spearTip - target.position);
+    float distance = norm(spearTip - target.getPosition());
 
     // Store the hit position (the spear tip)
     hitPosition = spearTip;
@@ -107,33 +109,33 @@ bool checkSpearCollision(const Cell& attacker, const Cell& target, float scale, 
 }
 
 // Function to check if a shield blocks an attack
-bool checkShieldBlock(const Cell& defender, const Cell& attacker, float scale, float cellWidth,
+bool checkShieldBlock(const BaseCell& defender, const BaseCell& attacker, float scale, float cellWidth,
                       bool& perfectParry) {
     // No block if not shielding
-    if (!defender.isShielding) {
+    if (!defender.isShielding()) {
         perfectParry = false;
         return false;
     }
 
     // No block if attacker is not attacking
-    if (!attacker.isAttacking || attacker.attackTime >= 0.5f) {
+    if (!attacker.isAttacking() || attacker.getAttackTime() >= 0.5f) {
         perfectParry = false;
         return false;
     }
 
     // Direction factors
-    float attackerDirFactor = attacker.faceRight ? 1.0f : -1.0f;
-    float defenderDirFactor = defender.faceRight ? 1.0f : -1.0f;
+    float attackerDirFactor = attacker.isFacingRight() ? 1.0f : -1.0f;
+    float defenderDirFactor = defender.isFacingRight() ? 1.0f : -1.0f;
 
     // Calculate spear tip position with attack extension
-    float attackExtension = attacker.attackTime * 2.0f * 50.0f * scale;
+    float attackExtension = attacker.getAttackTime() * 2.0f * 50.0f * scale;
     float spearLength = 100.0f * scale;
-    float spearTipX = attacker.position.x + attackerDirFactor * (spearLength * 1.5f + attackExtension);
-    float spearTipY = attacker.position.y + 60.0f * scale - spearLength * 0.3f;
+    float spearTipX = attacker.getPosition().x + attackerDirFactor * (spearLength * 1.5f + attackExtension);
+    float spearTipY = attacker.getPosition().y + 60.0f * scale - spearLength * 0.3f;
     Point2f spearTip(spearTipX, spearTipY);
 
     // Calculate shield position
-    Point2f shieldPos = defender.position;
+    Point2f shieldPos = defender.getPosition();
     shieldPos.x += -defenderDirFactor * cellWidth * 0.6f * scale; // Shield on opposite side of facing direction
 
     // Calculate distance from spear tip to shield
@@ -146,112 +148,32 @@ bool checkShieldBlock(const Cell& defender, const Cell& attacker, float scale, f
     bool blocked = distance < shieldRadius;
 
     // Check for perfect parry timing (within first 0.4s of shield activation - 400ms window)
-    perfectParry = blocked && defender.shieldTime < 0.4f;
+    perfectParry = blocked && defender.getShieldTime() < 0.4f;
 
     return blocked;
 }
 
 // Function to create parry effect
-void createParryEffect(Cell& attacker, Cell& defender) {
+void createParryEffect(BaseCell& attacker, BaseCell& defender) {
     // Knock attacker back
     float knockbackStrength = 10.0f;
-    float directionFactor = attacker.faceRight ? -1.0f : 1.0f; // Knocked back in opposite direction
-    attacker.velocity.x += directionFactor * knockbackStrength;
+    float directionFactor = attacker.isFacingRight() ? -1.0f : 1.0f; // Knocked back in opposite direction
+    attacker.applyKnockback(Point2f(directionFactor * knockbackStrength, 0.0f));
 
     // Visual parry effect for defender
-    defender.hasParried = true;
-    defender.parryTime = 0.0f; // Reset parry effect timer
+    defender.setParried(true);
+    defender.setParryTime(0.0f); // Reset parry effect timer
 
     // Cancel attacker's attack animation
-    attacker.isAttacking = false;
-    attacker.attackTime = 0.0f;
+    attacker.setAttacking(false);
+    attacker.setAttackTime(0.0f);
 
     // Deal reflected damage to attacker (double the base damage)
     const float reflectedDamage = 16.0f; // Base attack damage * 2
-    attacker.health -= reflectedDamage;
-    if (attacker.health < 0) attacker.health = 0;
+    attacker.takeDamage(reflectedDamage);
 
     // Create blood effect on the attacker (they're damaged by parry)
-    Point2f hitPosition = attacker.position;
-    Point2f spearTipPosition = attacker.position + Point2f(directionFactor * 30.0f, 0);
-    createBloodEffect(attacker, hitPosition, !attacker.faceRight, spearTipPosition);
-
-    // Stun attacker (slow them down)
-    attacker.velocity *= 0.2f; // Reduce velocity to 20%
-}
-
-// Function to update cell physics
-void updateCellPhysics(Cell& cell, const Size& canvasSize, float maxSpeed, float drag, float deltaTime) {
-    // Update velocity based on acceleration
-    cell.velocity += cell.acceleration;
-
-    // Clamp velocity to maximum speed
-    cell.velocity.x = std::clamp(cell.velocity.x, -maxSpeed, maxSpeed);
-    cell.velocity.y = std::clamp(cell.velocity.y, -maxSpeed, maxSpeed);
-
-    // Update position based on velocity
-    cell.position += cell.velocity;
-
-    // Apply drag
-    cell.velocity *= drag;
-
-    // Reset acceleration
-    cell.acceleration = Point2f(0, 0);
-
-    // Boundary check to keep cells inside the canvas
-    if (cell.position.x < 0) {
-        cell.position.x = 0;
-        cell.velocity.x *= -0.5f; // Bounce off the wall
-    }
-    if (cell.position.x > canvasSize.width) {
-        cell.position.x = canvasSize.width;
-        cell.velocity.x *= -0.5f; // Bounce off the wall
-    }
-    if (cell.position.y < 0) {
-        cell.position.y = 0;
-        cell.velocity.y *= -0.5f; // Bounce off the wall
-    }
-    if (cell.position.y > canvasSize.height) {
-        cell.position.y = canvasSize.height;
-        cell.velocity.y *= -0.5f; // Bounce off the wall
-    }
-
-    // Update direction based on velocity
-    if (cell.velocity.x > 0.5f) {
-        cell.faceRight = true;
-    } else if (cell.velocity.x < -0.5f) {
-        cell.faceRight = false;
-    }
-
-    // Update shield time if shielding
-    if (cell.isShielding) {
-        cell.shieldTime += deltaTime;
-
-        // Auto lower shield after duration expires
-        if (cell.shieldTime >= cell.shieldDuration) {
-            cell.isShielding = false;
-            cell.shieldTime = 0.0f;
-            cell.shieldCooldownTime = 0.3f; // Apply cooldown when shield is auto-lowered
-        }
-    } else {
-        cell.shieldTime = 0.0f;
-    }
-
-    // Update shield cooldown
-    if (cell.shieldCooldownTime > 0) {
-        cell.shieldCooldownTime = std::max(0.0f, cell.shieldCooldownTime - deltaTime);
-    }
-
-    // Update parry effect time
-    if (cell.hasParried) {
-        cell.parryTime += deltaTime;
-        // Parry effect lasts for 0.5 seconds
-        if (cell.parryTime >= 0.5f) {
-            cell.hasParried = false;
-            cell.parryTime = 0.0f;
-        }
-    }
-
-    // Update blood drops physics
-    updateBloodDrops(cell.bloodDrops, deltaTime);
+    Point2f hitPosition = attacker.getPosition();
+    Point2f spearTipPosition = attacker.getPosition() + Point2f(directionFactor * 30.0f, 0);
+    createBloodEffect(attacker, hitPosition, !attacker.isFacingRight(), spearTipPosition);
 }

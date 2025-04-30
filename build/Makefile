@@ -129,6 +129,30 @@ cell/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/build
 .PHONY : cell/fast
 
+GameEngine.o: GameEngine.cpp.o
+.PHONY : GameEngine.o
+
+# target to build an object file
+GameEngine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/GameEngine.cpp.o
+.PHONY : GameEngine.cpp.o
+
+GameEngine.i: GameEngine.cpp.i
+.PHONY : GameEngine.i
+
+# target to preprocess a source file
+GameEngine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/GameEngine.cpp.i
+.PHONY : GameEngine.cpp.i
+
+GameEngine.s: GameEngine.cpp.s
+.PHONY : GameEngine.s
+
+# target to generate assembly for a file
+GameEngine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/GameEngine.cpp.s
+.PHONY : GameEngine.cpp.s
+
 drawing.o: drawing.cpp.o
 .PHONY : drawing.o
 
@@ -152,6 +176,78 @@ drawing.s: drawing.cpp.s
 drawing.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/drawing.cpp.s
 .PHONY : drawing.cpp.s
+
+entities/AICell.o: entities/AICell.cpp.o
+.PHONY : entities/AICell.o
+
+# target to build an object file
+entities/AICell.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/AICell.cpp.o
+.PHONY : entities/AICell.cpp.o
+
+entities/AICell.i: entities/AICell.cpp.i
+.PHONY : entities/AICell.i
+
+# target to preprocess a source file
+entities/AICell.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/AICell.cpp.i
+.PHONY : entities/AICell.cpp.i
+
+entities/AICell.s: entities/AICell.cpp.s
+.PHONY : entities/AICell.s
+
+# target to generate assembly for a file
+entities/AICell.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/AICell.cpp.s
+.PHONY : entities/AICell.cpp.s
+
+entities/BaseCell.o: entities/BaseCell.cpp.o
+.PHONY : entities/BaseCell.o
+
+# target to build an object file
+entities/BaseCell.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/BaseCell.cpp.o
+.PHONY : entities/BaseCell.cpp.o
+
+entities/BaseCell.i: entities/BaseCell.cpp.i
+.PHONY : entities/BaseCell.i
+
+# target to preprocess a source file
+entities/BaseCell.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/BaseCell.cpp.i
+.PHONY : entities/BaseCell.cpp.i
+
+entities/BaseCell.s: entities/BaseCell.cpp.s
+.PHONY : entities/BaseCell.s
+
+# target to generate assembly for a file
+entities/BaseCell.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/BaseCell.cpp.s
+.PHONY : entities/BaseCell.cpp.s
+
+entities/PlayerCell.o: entities/PlayerCell.cpp.o
+.PHONY : entities/PlayerCell.o
+
+# target to build an object file
+entities/PlayerCell.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/PlayerCell.cpp.o
+.PHONY : entities/PlayerCell.cpp.o
+
+entities/PlayerCell.i: entities/PlayerCell.cpp.i
+.PHONY : entities/PlayerCell.i
+
+# target to preprocess a source file
+entities/PlayerCell.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/PlayerCell.cpp.i
+.PHONY : entities/PlayerCell.cpp.i
+
+entities/PlayerCell.s: entities/PlayerCell.cpp.s
+.PHONY : entities/PlayerCell.s
+
+# target to generate assembly for a file
+entities/PlayerCell.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/PlayerCell.cpp.s
+.PHONY : entities/PlayerCell.cpp.s
 
 main.o: main.cpp.o
 .PHONY : main.o
@@ -210,9 +306,21 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... cell"
+	@echo "... GameEngine.o"
+	@echo "... GameEngine.i"
+	@echo "... GameEngine.s"
 	@echo "... drawing.o"
 	@echo "... drawing.i"
 	@echo "... drawing.s"
+	@echo "... entities/AICell.o"
+	@echo "... entities/AICell.i"
+	@echo "... entities/AICell.s"
+	@echo "... entities/BaseCell.o"
+	@echo "... entities/BaseCell.i"
+	@echo "... entities/BaseCell.s"
+	@echo "... entities/PlayerCell.o"
+	@echo "... entities/PlayerCell.i"
+	@echo "... entities/PlayerCell.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

@@ -6,6 +6,9 @@
 #include <map>
 #include "structs.h"
 
+// 前向声明
+class BaseCell;
+
 // Function to compute Bezier curve points
 cv::Point2f bezierPoint(const std::vector<cv::Point2f>& controlPoints, float t);
 
@@ -29,7 +32,7 @@ void drawHealthBar(cv::Mat& canvas, const cv::Point2f& position,
                   float cellWidth, float health, float maxHealth);
 
 // Function to draw the cell directly on the canvas
-void drawCell(cv::Mat& canvas, const Cell& cell, const std::map<std::string, float>& config,
+void drawCell(cv::Mat& canvas, const BaseCell& cell, const std::map<std::string, float>& config,
              float scale, float time);
 
 // Load shield image

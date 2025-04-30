@@ -114,11 +114,71 @@ CMakeFiles/cell.dir/physics.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/physics.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/physics.cpp -o CMakeFiles/cell.dir/physics.cpp.s
 
+CMakeFiles/cell.dir/GameEngine.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/GameEngine.cpp.o: /Users/mac/Documents/GitHub/DT_cell/GameEngine.cpp
+CMakeFiles/cell.dir/GameEngine.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/cell.dir/GameEngine.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/GameEngine.cpp.o -MF CMakeFiles/cell.dir/GameEngine.cpp.o.d -o CMakeFiles/cell.dir/GameEngine.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/GameEngine.cpp
+
+CMakeFiles/cell.dir/GameEngine.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/GameEngine.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/GameEngine.cpp > CMakeFiles/cell.dir/GameEngine.cpp.i
+
+CMakeFiles/cell.dir/GameEngine.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/GameEngine.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/GameEngine.cpp -o CMakeFiles/cell.dir/GameEngine.cpp.s
+
+CMakeFiles/cell.dir/entities/BaseCell.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/entities/BaseCell.cpp.o: /Users/mac/Documents/GitHub/DT_cell/entities/BaseCell.cpp
+CMakeFiles/cell.dir/entities/BaseCell.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/cell.dir/entities/BaseCell.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/entities/BaseCell.cpp.o -MF CMakeFiles/cell.dir/entities/BaseCell.cpp.o.d -o CMakeFiles/cell.dir/entities/BaseCell.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/entities/BaseCell.cpp
+
+CMakeFiles/cell.dir/entities/BaseCell.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/entities/BaseCell.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/entities/BaseCell.cpp > CMakeFiles/cell.dir/entities/BaseCell.cpp.i
+
+CMakeFiles/cell.dir/entities/BaseCell.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/entities/BaseCell.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/entities/BaseCell.cpp -o CMakeFiles/cell.dir/entities/BaseCell.cpp.s
+
+CMakeFiles/cell.dir/entities/PlayerCell.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/entities/PlayerCell.cpp.o: /Users/mac/Documents/GitHub/DT_cell/entities/PlayerCell.cpp
+CMakeFiles/cell.dir/entities/PlayerCell.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/cell.dir/entities/PlayerCell.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/entities/PlayerCell.cpp.o -MF CMakeFiles/cell.dir/entities/PlayerCell.cpp.o.d -o CMakeFiles/cell.dir/entities/PlayerCell.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/entities/PlayerCell.cpp
+
+CMakeFiles/cell.dir/entities/PlayerCell.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/entities/PlayerCell.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/entities/PlayerCell.cpp > CMakeFiles/cell.dir/entities/PlayerCell.cpp.i
+
+CMakeFiles/cell.dir/entities/PlayerCell.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/entities/PlayerCell.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/entities/PlayerCell.cpp -o CMakeFiles/cell.dir/entities/PlayerCell.cpp.s
+
+CMakeFiles/cell.dir/entities/AICell.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/entities/AICell.cpp.o: /Users/mac/Documents/GitHub/DT_cell/entities/AICell.cpp
+CMakeFiles/cell.dir/entities/AICell.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/cell.dir/entities/AICell.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/entities/AICell.cpp.o -MF CMakeFiles/cell.dir/entities/AICell.cpp.o.d -o CMakeFiles/cell.dir/entities/AICell.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/entities/AICell.cpp
+
+CMakeFiles/cell.dir/entities/AICell.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/entities/AICell.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/entities/AICell.cpp > CMakeFiles/cell.dir/entities/AICell.cpp.i
+
+CMakeFiles/cell.dir/entities/AICell.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/entities/AICell.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/entities/AICell.cpp -o CMakeFiles/cell.dir/entities/AICell.cpp.s
+
 # Object files for target cell
 cell_OBJECTS = \
 "CMakeFiles/cell.dir/main.cpp.o" \
 "CMakeFiles/cell.dir/drawing.cpp.o" \
-"CMakeFiles/cell.dir/physics.cpp.o"
+"CMakeFiles/cell.dir/physics.cpp.o" \
+"CMakeFiles/cell.dir/GameEngine.cpp.o" \
+"CMakeFiles/cell.dir/entities/BaseCell.cpp.o" \
+"CMakeFiles/cell.dir/entities/PlayerCell.cpp.o" \
+"CMakeFiles/cell.dir/entities/AICell.cpp.o"
 
 # External object files for target cell
 cell_EXTERNAL_OBJECTS =
@@ -126,6 +186,10 @@ cell_EXTERNAL_OBJECTS =
 cell: CMakeFiles/cell.dir/main.cpp.o
 cell: CMakeFiles/cell.dir/drawing.cpp.o
 cell: CMakeFiles/cell.dir/physics.cpp.o
+cell: CMakeFiles/cell.dir/GameEngine.cpp.o
+cell: CMakeFiles/cell.dir/entities/BaseCell.cpp.o
+cell: CMakeFiles/cell.dir/entities/PlayerCell.cpp.o
+cell: CMakeFiles/cell.dir/entities/AICell.cpp.o
 cell: CMakeFiles/cell.dir/build.make
 cell: /usr/local/lib/libopencv_gapi.4.11.0.dylib
 cell: /usr/local/lib/libopencv_stitching.4.11.0.dylib
@@ -184,7 +248,7 @@ cell: /usr/local/lib/libopencv_photo.4.11.0.dylib
 cell: /usr/local/lib/libopencv_imgproc.4.11.0.dylib
 cell: /usr/local/lib/libopencv_core.4.11.0.dylib
 cell: CMakeFiles/cell.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable cell"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable cell"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cell.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
