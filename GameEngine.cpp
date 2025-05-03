@@ -76,7 +76,7 @@ void GameEngine::initializeConfig() {
     // 攻击和防御参数
     gameConfig.attackDuration = 0.5f;
     gameConfig.attackDamage = 8.0f;
-    gameConfig.parryWindowDuration = 0.05f;
+    gameConfig.parryWindowDuration = 0.15f;  // 增大完美格挡窗口时间，从0.05秒到0.15秒
     gameConfig.shieldCooldown = 0.3f;
     gameConfig.shieldDuration = 2.0f;
     gameConfig.damageReduction = 0.5f;
@@ -257,7 +257,7 @@ void GameEngine::displayControls(cv::Mat& canvas) {
                cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
     
     cv::putText(canvas,
-               "Player 2: Arrow keys to move, / to attack, . to shield",
+               "Player 2: Arrow keys to move, F to attack, G to shield, Q/E to change aggression",
                cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
     
     // 显示屏蔽状态
@@ -290,7 +290,7 @@ void GameEngine::handleInput() {
         return;
     }
     
-    // 处理玩家1的输入
+    // 处理玩家1的输入 (WASD移动, F攻击, G防御, Q/E调整攻击性)
     if (key == 'w' || key == 'W') {
         playerCells[0]->moveUp(gameConfig.accelerationStep);
     }
@@ -316,23 +316,23 @@ void GameEngine::handleInput() {
         playerCells[0]->toggleShield(gameConfig.shieldCooldown);
     }
     
-    // 处理玩家2的输入
-    if (key == 82 || key == 0x260000) { // UP arrow
+    // 处理玩家2的输入，仍然使用方向键移动，但使用与玩家1相同的按键方式 (F攻击, G防御, Q/E调整攻击性)
+    if (key == 82 || key == 0x260000 || key == 63232) { // UP arrow (macOS: 63232)
         playerCells[1]->moveUp(gameConfig.accelerationStep);
     }
-    if (key == 84 || key == 0x280000) { // DOWN arrow
+    if (key == 84 || key == 0x280000 || key == 63233) { // DOWN arrow (macOS: 63233)
         playerCells[1]->moveDown(gameConfig.accelerationStep);
     }
-    if (key == 81 || key == 0x250000) { // LEFT arrow
+    if (key == 81 || key == 0x250000 || key == 63234) { // LEFT arrow (macOS: 63234)
         playerCells[1]->moveLeft(gameConfig.accelerationStep);
     }
-    if (key == 83 || key == 0x270000) { // RIGHT arrow
+    if (key == 83 || key == 0x270000 || key == 63235) { // RIGHT arrow (macOS: 63235)
         playerCells[1]->moveRight(gameConfig.accelerationStep);
     }
-    if ((key == '/' || key == 47) && !playerCells[1]->isShielding()) {
+    if ((key == 'f' || key == 'F') && !playerCells[1]->isShielding()) {
         playerCells[1]->attack();
     }
-    if ((key == '.' || key == 46) && playerCells[1]->canToggleShield()) {
+    if ((key == 'g' || key == 'G') && playerCells[1]->canToggleShield()) {
         playerCells[1]->toggleShield(gameConfig.shieldCooldown);
     }
 }

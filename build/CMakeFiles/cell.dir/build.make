@@ -170,6 +170,76 @@ CMakeFiles/cell.dir/entities/AICell.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/entities/AICell.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/entities/AICell.cpp -o CMakeFiles/cell.dir/entities/AICell.cpp.s
 
+CMakeFiles/cell.dir/network/NetworkManager.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/network/NetworkManager.cpp.o: /Users/mac/Documents/GitHub/DT_cell/network/NetworkManager.cpp
+CMakeFiles/cell.dir/network/NetworkManager.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/cell.dir/network/NetworkManager.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/network/NetworkManager.cpp.o -MF CMakeFiles/cell.dir/network/NetworkManager.cpp.o.d -o CMakeFiles/cell.dir/network/NetworkManager.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/network/NetworkManager.cpp
+
+CMakeFiles/cell.dir/network/NetworkManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/network/NetworkManager.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/network/NetworkManager.cpp > CMakeFiles/cell.dir/network/NetworkManager.cpp.i
+
+CMakeFiles/cell.dir/network/NetworkManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/network/NetworkManager.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/network/NetworkManager.cpp -o CMakeFiles/cell.dir/network/NetworkManager.cpp.s
+
+CMakeFiles/cell.dir/network/NetworkServer.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/network/NetworkServer.cpp.o: /Users/mac/Documents/GitHub/DT_cell/network/NetworkServer.cpp
+CMakeFiles/cell.dir/network/NetworkServer.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/cell.dir/network/NetworkServer.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/network/NetworkServer.cpp.o -MF CMakeFiles/cell.dir/network/NetworkServer.cpp.o.d -o CMakeFiles/cell.dir/network/NetworkServer.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/network/NetworkServer.cpp
+
+CMakeFiles/cell.dir/network/NetworkServer.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/network/NetworkServer.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/network/NetworkServer.cpp > CMakeFiles/cell.dir/network/NetworkServer.cpp.i
+
+CMakeFiles/cell.dir/network/NetworkServer.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/network/NetworkServer.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/network/NetworkServer.cpp -o CMakeFiles/cell.dir/network/NetworkServer.cpp.s
+
+CMakeFiles/cell.dir/network/NetworkClient.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/network/NetworkClient.cpp.o: /Users/mac/Documents/GitHub/DT_cell/network/NetworkClient.cpp
+CMakeFiles/cell.dir/network/NetworkClient.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/cell.dir/network/NetworkClient.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/network/NetworkClient.cpp.o -MF CMakeFiles/cell.dir/network/NetworkClient.cpp.o.d -o CMakeFiles/cell.dir/network/NetworkClient.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/network/NetworkClient.cpp
+
+CMakeFiles/cell.dir/network/NetworkClient.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/network/NetworkClient.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/network/NetworkClient.cpp > CMakeFiles/cell.dir/network/NetworkClient.cpp.i
+
+CMakeFiles/cell.dir/network/NetworkClient.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/network/NetworkClient.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/network/NetworkClient.cpp -o CMakeFiles/cell.dir/network/NetworkClient.cpp.s
+
+CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o: /Users/mac/Documents/GitHub/DT_cell/network/NetworkBehaviorMonitor.cpp
+CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o -MF CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o.d -o CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/network/NetworkBehaviorMonitor.cpp
+
+CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/network/NetworkBehaviorMonitor.cpp > CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.i
+
+CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/network/NetworkBehaviorMonitor.cpp -o CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.s
+
+CMakeFiles/cell.dir/NetGameEngine.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/NetGameEngine.cpp.o: /Users/mac/Documents/GitHub/DT_cell/NetGameEngine.cpp
+CMakeFiles/cell.dir/NetGameEngine.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/cell.dir/NetGameEngine.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/NetGameEngine.cpp.o -MF CMakeFiles/cell.dir/NetGameEngine.cpp.o.d -o CMakeFiles/cell.dir/NetGameEngine.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/NetGameEngine.cpp
+
+CMakeFiles/cell.dir/NetGameEngine.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/NetGameEngine.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/NetGameEngine.cpp > CMakeFiles/cell.dir/NetGameEngine.cpp.i
+
+CMakeFiles/cell.dir/NetGameEngine.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/NetGameEngine.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/NetGameEngine.cpp -o CMakeFiles/cell.dir/NetGameEngine.cpp.s
+
 # Object files for target cell
 cell_OBJECTS = \
 "CMakeFiles/cell.dir/main.cpp.o" \
@@ -178,7 +248,12 @@ cell_OBJECTS = \
 "CMakeFiles/cell.dir/GameEngine.cpp.o" \
 "CMakeFiles/cell.dir/entities/BaseCell.cpp.o" \
 "CMakeFiles/cell.dir/entities/PlayerCell.cpp.o" \
-"CMakeFiles/cell.dir/entities/AICell.cpp.o"
+"CMakeFiles/cell.dir/entities/AICell.cpp.o" \
+"CMakeFiles/cell.dir/network/NetworkManager.cpp.o" \
+"CMakeFiles/cell.dir/network/NetworkServer.cpp.o" \
+"CMakeFiles/cell.dir/network/NetworkClient.cpp.o" \
+"CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o" \
+"CMakeFiles/cell.dir/NetGameEngine.cpp.o"
 
 # External object files for target cell
 cell_EXTERNAL_OBJECTS =
@@ -190,6 +265,11 @@ cell: CMakeFiles/cell.dir/GameEngine.cpp.o
 cell: CMakeFiles/cell.dir/entities/BaseCell.cpp.o
 cell: CMakeFiles/cell.dir/entities/PlayerCell.cpp.o
 cell: CMakeFiles/cell.dir/entities/AICell.cpp.o
+cell: CMakeFiles/cell.dir/network/NetworkManager.cpp.o
+cell: CMakeFiles/cell.dir/network/NetworkServer.cpp.o
+cell: CMakeFiles/cell.dir/network/NetworkClient.cpp.o
+cell: CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o
+cell: CMakeFiles/cell.dir/NetGameEngine.cpp.o
 cell: CMakeFiles/cell.dir/build.make
 cell: /usr/local/lib/libopencv_gapi.4.11.0.dylib
 cell: /usr/local/lib/libopencv_stitching.4.11.0.dylib
@@ -248,7 +328,7 @@ cell: /usr/local/lib/libopencv_photo.4.11.0.dylib
 cell: /usr/local/lib/libopencv_imgproc.4.11.0.dylib
 cell: /usr/local/lib/libopencv_core.4.11.0.dylib
 cell: CMakeFiles/cell.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable cell"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable cell"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cell.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -23,6 +23,11 @@ set(SOURCES
     entities/BaseCell.cpp
     entities/PlayerCell.cpp
     entities/AICell.cpp
+    network/NetworkManager.cpp
+    network/NetworkServer.cpp
+    network/NetworkClient.cpp
+    network/NetworkBehaviorMonitor.cpp
+    NetGameEngine.cpp
 )
 
 # 添加可执行文件
@@ -30,3 +35,22 @@ add_executable(cell ${SOURCES})
 
 # 将OpenCV库链接到可执行文件
 target_link_libraries(cell ${OpenCV_LIBS})
+
+# 在macOS上链接相关网络库
+if(APPLE)
+    target_link_libraries(cell "-framework CoreFoundation" "-framework SystemConfiguration" "-framework Network")
+endif()
+
+# 在Linux上链接相关网络库
+if(UNIX AND NOT APPLE)
+    target_link_libraries(cell pthread rt)
+endif()
+
+# 在Windows上链接相关网络库
+if(WIN32)
+    target_link_libraries(cell wsock32 ws2_32 Iphlpapi)
+endif()
+
+# 添加网络稳定性编译选项
+add_compile_definitions(NETWORK_STABILITY_CHECK=1)
+add_compile_definitions(MAX_NETWORK_TIMEOUT_MS=5000)

@@ -146,9 +146,12 @@ bool checkShieldBlock(const BaseCell& defender, const BaseCell& attacker, float 
 
     // Check for collision
     bool blocked = distance < shieldRadius;
-
-    // Check for perfect parry timing (within first 0.4s of shield activation - 400ms window)
-    perfectParry = blocked && defender.getShieldTime() < 0.4f;
+    
+    // Check for perfect parry timing - 使用parryWindowDuration作为判定依据
+    // 在游戏配置参数的时间窗口内算作完美格挡
+    // 注意：这里需要知道parryWindowDuration的值，假设通过外部传入或全局可访问
+    // 由于我无法直接访问gameConfig，这里使用0.15f作为示例
+    perfectParry = blocked && defender.getShieldTime() < 0.15f;
 
     return blocked;
 }

@@ -153,6 +153,30 @@ GameEngine.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/GameEngine.cpp.s
 .PHONY : GameEngine.cpp.s
 
+NetGameEngine.o: NetGameEngine.cpp.o
+.PHONY : NetGameEngine.o
+
+# target to build an object file
+NetGameEngine.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/NetGameEngine.cpp.o
+.PHONY : NetGameEngine.cpp.o
+
+NetGameEngine.i: NetGameEngine.cpp.i
+.PHONY : NetGameEngine.i
+
+# target to preprocess a source file
+NetGameEngine.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/NetGameEngine.cpp.i
+.PHONY : NetGameEngine.cpp.i
+
+NetGameEngine.s: NetGameEngine.cpp.s
+.PHONY : NetGameEngine.s
+
+# target to generate assembly for a file
+NetGameEngine.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/NetGameEngine.cpp.s
+.PHONY : NetGameEngine.cpp.s
+
 drawing.o: drawing.cpp.o
 .PHONY : drawing.o
 
@@ -273,6 +297,102 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+network/NetworkBehaviorMonitor.o: network/NetworkBehaviorMonitor.cpp.o
+.PHONY : network/NetworkBehaviorMonitor.o
+
+# target to build an object file
+network/NetworkBehaviorMonitor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o
+.PHONY : network/NetworkBehaviorMonitor.cpp.o
+
+network/NetworkBehaviorMonitor.i: network/NetworkBehaviorMonitor.cpp.i
+.PHONY : network/NetworkBehaviorMonitor.i
+
+# target to preprocess a source file
+network/NetworkBehaviorMonitor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.i
+.PHONY : network/NetworkBehaviorMonitor.cpp.i
+
+network/NetworkBehaviorMonitor.s: network/NetworkBehaviorMonitor.cpp.s
+.PHONY : network/NetworkBehaviorMonitor.s
+
+# target to generate assembly for a file
+network/NetworkBehaviorMonitor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.s
+.PHONY : network/NetworkBehaviorMonitor.cpp.s
+
+network/NetworkClient.o: network/NetworkClient.cpp.o
+.PHONY : network/NetworkClient.o
+
+# target to build an object file
+network/NetworkClient.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkClient.cpp.o
+.PHONY : network/NetworkClient.cpp.o
+
+network/NetworkClient.i: network/NetworkClient.cpp.i
+.PHONY : network/NetworkClient.i
+
+# target to preprocess a source file
+network/NetworkClient.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkClient.cpp.i
+.PHONY : network/NetworkClient.cpp.i
+
+network/NetworkClient.s: network/NetworkClient.cpp.s
+.PHONY : network/NetworkClient.s
+
+# target to generate assembly for a file
+network/NetworkClient.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkClient.cpp.s
+.PHONY : network/NetworkClient.cpp.s
+
+network/NetworkManager.o: network/NetworkManager.cpp.o
+.PHONY : network/NetworkManager.o
+
+# target to build an object file
+network/NetworkManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkManager.cpp.o
+.PHONY : network/NetworkManager.cpp.o
+
+network/NetworkManager.i: network/NetworkManager.cpp.i
+.PHONY : network/NetworkManager.i
+
+# target to preprocess a source file
+network/NetworkManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkManager.cpp.i
+.PHONY : network/NetworkManager.cpp.i
+
+network/NetworkManager.s: network/NetworkManager.cpp.s
+.PHONY : network/NetworkManager.s
+
+# target to generate assembly for a file
+network/NetworkManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkManager.cpp.s
+.PHONY : network/NetworkManager.cpp.s
+
+network/NetworkServer.o: network/NetworkServer.cpp.o
+.PHONY : network/NetworkServer.o
+
+# target to build an object file
+network/NetworkServer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkServer.cpp.o
+.PHONY : network/NetworkServer.cpp.o
+
+network/NetworkServer.i: network/NetworkServer.cpp.i
+.PHONY : network/NetworkServer.i
+
+# target to preprocess a source file
+network/NetworkServer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkServer.cpp.i
+.PHONY : network/NetworkServer.cpp.i
+
+network/NetworkServer.s: network/NetworkServer.cpp.s
+.PHONY : network/NetworkServer.s
+
+# target to generate assembly for a file
+network/NetworkServer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/network/NetworkServer.cpp.s
+.PHONY : network/NetworkServer.cpp.s
+
 physics.o: physics.cpp.o
 .PHONY : physics.o
 
@@ -309,6 +429,9 @@ help:
 	@echo "... GameEngine.o"
 	@echo "... GameEngine.i"
 	@echo "... GameEngine.s"
+	@echo "... NetGameEngine.o"
+	@echo "... NetGameEngine.i"
+	@echo "... NetGameEngine.s"
 	@echo "... drawing.o"
 	@echo "... drawing.i"
 	@echo "... drawing.s"
@@ -324,6 +447,18 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... network/NetworkBehaviorMonitor.o"
+	@echo "... network/NetworkBehaviorMonitor.i"
+	@echo "... network/NetworkBehaviorMonitor.s"
+	@echo "... network/NetworkClient.o"
+	@echo "... network/NetworkClient.i"
+	@echo "... network/NetworkClient.s"
+	@echo "... network/NetworkManager.o"
+	@echo "... network/NetworkManager.i"
+	@echo "... network/NetworkManager.s"
+	@echo "... network/NetworkServer.o"
+	@echo "... network/NetworkServer.i"
+	@echo "... network/NetworkServer.s"
 	@echo "... physics.o"
 	@echo "... physics.i"
 	@echo "... physics.s"
