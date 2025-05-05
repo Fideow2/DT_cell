@@ -183,8 +183,10 @@ void NetGameEngine::run() {
 void NetGameEngine::initializeConfig() {
     // 基本游戏参数
     gameConfig.maxSpeed = 6.0f;
-    gameConfig.accelerationStep = 0.7f;
-    gameConfig.drag = 0.94f;
+    // 减小加速度步长使移动更平滑
+    gameConfig.accelerationStep = 0.5f;  // 从0.7f减小到0.5f
+    // 调整阻力使移动更丝滑
+    gameConfig.drag = 0.96f;  // 从0.94f调整到0.96f
     gameConfig.numCells = 5; // 联机模式下减少AI数量
     gameConfig.scale = 0.4f;
     
@@ -206,14 +208,16 @@ void NetGameEngine::initializeConfig() {
     
     // 细胞渲染配置
     cellConfig = {
-        {"cell_width", 100.f}, {"cell_height", 60.f},
-        {"eye_size", 20.f}, {"eye_ecc", 0.1f}, {"eye_angle", 15.f},
+        {"cell_width", 80.f},  // 从100.f减小到80.f
+        {"cell_height", 48.f}, // 从60.f减小到48.f
+        {"eye_size", 16.f},    // 从20.f减小到16.f，保持比例
+        {"eye_ecc", 0.1f}, {"eye_angle", 15.f},
         {"eye_y_off", 0.2f}, {"eye_x_off", 0.5f},
         {"mouth_x0", 0.6f}, {"mouth_y0", 0.55f},
         {"mouth_x1", 0.7f}, {"mouth_y1", 0.65f},
         {"mouth_x2", 0.85f}, {"mouth_y2", 0.55f},
-        {"mouth_width", 3.f},
-        {"tail_width", 3.f}
+        {"mouth_width", 2.5f}, // 从3.f减小到2.5f，保持比例
+        {"tail_width", 2.5f}   // 从3.f减小到2.5f，保持比例
     };
 }
 
@@ -427,19 +431,19 @@ void NetGameEngine::displayControls(cv::Mat& canvas) {
     // 显示控制提示，统一控制方式
     if (gameMode == NetGameMode::SERVER || gameMode == NetGameMode::STANDALONE) {
         cv::putText(canvas,
-                   "Player 1 (本地): WASD to move, F to attack, G to shield, Q/E to change aggression",
+                   "Player 1 (本地): WASD to move, J to attack, K to shield, Q/E to change aggression",
                    cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
     }
     
     if (gameMode == NetGameMode::CLIENT) {
         cv::putText(canvas,
-                   "Player 2 (本地): WASD to move, F to attack, G to shield, Q/E to change aggression",
+                   "Player 2 (本地): WASD to move, J to attack, K to shield, Q/E to change aggression",
                    cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
     }
     
     if (gameMode == NetGameMode::STANDALONE) {
         cv::putText(canvas,
-                   "Player 2 (本地): WASD to move, F to attack, G to shield, Q/E to change aggression",
+                   "Player 2 (本地): WASD to move, J to attack, K to shield, Q/E to change aggression",
                    cv::Point(10, 50), cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
     }
     
@@ -492,7 +496,7 @@ void NetGameEngine::handleInput() {
     
     // 根据游戏模式处理输入
     if (gameMode == NetGameMode::SERVER || gameMode == NetGameMode::CLIENT) {
-        // 统一玩家控制方式，均使用WASD + F/G
+        // 统一玩家控制方式，均使用WASD + J/K
         if (key == 'w' || key == 'W') {
             localPlayer->moveUp(gameConfig.accelerationStep);
             inputMsg.moveUp = true;
@@ -517,11 +521,11 @@ void NetGameEngine::handleInput() {
             localPlayer->increaseAggression(0.1f);
             inputMsg.increaseAggression = true;
         }
-        if ((key == 'f' || key == 'F') && !localPlayer->isShielding()) {
+        if ((key == 'j' || key == 'J') && !localPlayer->isShielding()) {
             localPlayer->attack();
             inputMsg.attack = true;
         }
-        if ((key == 'g' || key == 'G') && localPlayer->canToggleShield()) {
+        if ((key == 'k' || key == 'K') && localPlayer->canToggleShield()) {
             localPlayer->toggleShield(gameConfig.shieldCooldown);
             inputMsg.shield = true;
         }
@@ -548,10 +552,10 @@ void NetGameEngine::handleInput() {
         if (key == 'e' || key == 'E') {
             playerCells[0]->increaseAggression(0.1f);
         }
-        if ((key == 'f' || key == 'F') && !playerCells[0]->isShielding()) {
+        if ((key == 'j' || key == 'J') && !playerCells[0]->isShielding()) {
             playerCells[0]->attack();
         }
-        if ((key == 'g' || key == 'G') && playerCells[0]->canToggleShield()) {
+        if ((key == 'k' || key == 'K') && playerCells[0]->canToggleShield()) {
             playerCells[0]->toggleShield(gameConfig.shieldCooldown);
         }
         
