@@ -23,6 +23,10 @@ public:
     virtual void applyAcceleration(const cv::Point2f& acc);
     void applyKnockback(const cv::Point2f& force);
     
+    // 添加直接设置位置和速度的方法
+    void setPosition(const cv::Point2f& newPosition) { position = newPosition; }
+    void setVelocity(const cv::Point2f& newVelocity) { velocity = newVelocity; }
+    
     // 战斗系统
     bool isAttacking() const;
     void setAttacking(bool attacking);

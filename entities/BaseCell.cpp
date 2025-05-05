@@ -218,12 +218,14 @@ void BaseCell::updatePhysics(float deltaTime, float maxSpeed, float drag, const 
         velocity.y *= -0.5f; // 反弹
     }
     
-    // 根据速度更新方向
-    if (velocity.x > 0.5f) {
+    // 根据速度更新方向，添加更大的阈值和缓冲以避免频繁切换
+    // 只有本地玩家或者速度超过较大阈值时才更新朝向
+    if (velocity.x > 1.0f) {
         faceRight = true;
-    } else if (velocity.x < -0.5f) {
+    } else if (velocity.x < -1.0f) {
         faceRight = false;
     }
+    // 速度很小的情况下保持当前朝向
 }
 
 void BaseCell::updateShieldState(float deltaTime) {

@@ -1,5 +1,109 @@
 #include "NetworkManager.h"
 #include <cstring>
+#include <iostream>
+#include <string>
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#pragma comment(lib, "ws2_32.lib")
+#else
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#endif
+
+// 获取本地IP地址
+std::vector<std::string> NetworkManager::getLocalIpAddresses() {
+    std::vector<std::string> ipAddresses;
+    
+#ifdef _WIN32
+    // Windows实现
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        return ipAddresses;
+    }
+    
+    char hostName[256];
+    if (gethostname(hostName, sizeof(hostName)) != 0) {
+        WSACleanup();
+        return ipAddresses;
+    }
+    
+    struct addrinfo* result = NULL;
+    struct addrinfo hints;
+    
+    ZeroMemory(&hints, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = IPPROTO_TCP;
+    
+    if (getaddrinfo(hostName, NULL, &hints, &result) != 0) {
+        WSACleanup();
+        return ipAddresses;
+    }
+    
+    for (struct addrinfo* ptr = result; ptr != NULL; ptr = ptr->ai_next) {
+        struct sockaddr_in* addr = (struct sockaddr_in*)ptr->ai_addr;
+        char ipStr[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(addr->sin_addr), ipStr, INET_ADDRSTRLEN);
+        ipAddresses.push_back(std::string(ipStr));
+    }
+    
+    freeaddrinfo(result);
+    WSACleanup();
+#else
+    // Unix/Linux/macOS实现
+    struct ifaddrs* interfaces = NULL;
+    if (getifaddrs(&interfaces) == 0) {
+        for (struct ifaddrs* ifa = interfaces; ifa != NULL; ifa = ifa->ifa_next) {
+            if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET) {
+                void* addr = &((struct sockaddr_in*)ifa->ifa_addr)->sin_addr;
+                char ipStr[INET_ADDRSTRLEN];
+                inet_ntop(AF_INET, addr, ipStr, INET_ADDRSTRLEN);
+                
+                // 过滤掉本地回环地址
+                if (strcmp(ipStr, "127.0.0.1") != 0) {
+                    ipAddresses.push_back(std::string(ipStr));
+                }
+            }
+        }
+        freeifaddrs(interfaces);
+    }
+#endif
+    
+    return ipAddresses;
+}
+
+// 显示服务器IP地址
+void NetworkManager::displayServerIp(int port) {
+    std::vector<std::string> ipAddresses = getLocalIpAddresses();
+    
+    std::cout << "=======================================" << std::endl;
+    std::cout << "服务器已启动，可用的连接地址:" << std::endl;
+    
+    if (ipAddresses.empty()) {
+        std::cout << "无法获取IP地址" << std::endl;
+    } else {
+        for (const auto& ip : ipAddresses) {
+            std::cout << "  http://" << ip << ":" << port << std::endl;
+        }
+    }
+    
+    std::cout << "=======================================" << std::endl;
+}
+
+// 修改服务器启动方法，调用IP显示功能
+bool NetworkManager::startServer(int port) {
+    // ...原有的服务器启动代码...
+    
+    // 显示服务器IP
+    displayServerIp(port);
+    
+    return true; // 根据实际启动结果返回
+}
 
 // 序列化玩家输入
 std::vector<uint8_t> NetworkSerializer::serializePlayerInput(const PlayerInputMessage& input) {
@@ -98,22 +202,14 @@ PlayerStateMessage NetworkSerializer::getPlayerStateFromCell(const BaseCell& cel
 
 // 将玩家状态应用到BaseCell
 void NetworkSerializer::applyPlayerStateToCell(PlayerCell& cell, const PlayerStateMessage& state) {
-    // 通过PlayerCell可用的方法来更新状态
-    // 更新位置需要处理加速度和边界等问题，这里我们直接应用差值移动
-    cv::Point2f currentPos = cell.getPosition();
-    cv::Point2f move = state.position - currentPos;
+    // 直接使用远程玩家的朝向状态，避免朝向频繁切换
+    cell.setFacingRight(state.facingRight);
     
-    if (move.x > 0) {
-        cell.moveRight(move.x);
-    } else if (move.x < 0) {
-        cell.moveLeft(-move.x);
-    }
+    // 位置更新使用直接设置位置而不是通过移动方法
+    cell.setPosition(state.position);
     
-    if (move.y > 0) {
-        cell.moveDown(move.y);
-    } else if (move.y < 0) {
-        cell.moveUp(-move.y);
-    }
+    // 设置速度状态
+    cell.setVelocity(state.velocity);
     
     // 更新攻击状态
     if (state.isAttacking && !cell.isAttacking()) {
