@@ -7,7 +7,7 @@
 class PlayerCell : public BaseCell {
 public:
     PlayerCell(const cv::Point2f& pos, int playerNum, const cv::Vec3b& baseColor,
-              float phaseOffset, float aggression = 0.0f);
+              float phaseOffset, float aggression = 0.0f, const std::string& cellGene = "");
     
     // 玩家输入处理方法
     void moveUp(float accelerationStep);

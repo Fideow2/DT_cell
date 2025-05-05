@@ -180,3 +180,47 @@ void createParryEffect(BaseCell& attacker, BaseCell& defender) {
     Point2f spearTipPosition = attacker.getPosition() + Point2f(directionFactor * 30.0f, 0);
     createBloodEffect(attacker, hitPosition, !attacker.isFacingRight(), spearTipPosition);
 }
+
+// 处理碰撞检测和伤害计算的函数
+void handleCellCollision(BaseCell& cell1, BaseCell& cell2, GameConfig& config) {
+    // ...existing code...
+    
+    // 如果有一个细胞正在攻击另一个
+    if (cell1.isAttacking() && !cell2.isAttacking()) {
+        bool perfectParry = false;
+        
+        // 检查被攻击的细胞是否在格挡 - 使用cellConfig中的cell_width，不是config.cellWidth
+        float cellWidth = 60.0f; // 默认值，应与NetGameEngine.cpp中initializeConfig()里的值一致
+        if (checkShieldBlock(cell2, cell1, config.scale, cellWidth, perfectParry)) {
+            // ...existing code...
+        } else {
+            // 直接命中，计算伤害
+            float damage = config.attackDamage * (1.0f + cell1.getAggressionLevel() * 0.5f);
+            
+            // 应用攻击者的攻击倍率
+            damage *= cell1.getAttackMultiplier();
+            
+            // AI细胞的攻击伤害降低
+            if (cell1.getPlayerNumber() == 0) {
+                damage *= 0.7f;  // AI细胞伤害降低30%
+            }
+            
+            // 应用基因相似度伤害修正
+            float geneticFactor = cell1.getGeneticDamageMultiplier(cell2);
+            damage *= geneticFactor;
+            
+            // 应用防御者的防御倍率
+            damage *= (1.0f - cell2.getDamageReduction() * cell2.getDefenseMultiplier());
+            
+            // 最终伤害至少1点
+            damage = std::max(1.0f, damage);
+            
+            // 施加伤害
+            cell2.takeDamage(damage);
+            
+            // 创建血液效果
+            // ...existing code...
+        }
+    }
+    // ...existing code...
+}

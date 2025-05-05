@@ -8,7 +8,7 @@
 class AICell : public BaseCell {
 public:
     AICell(const cv::Point2f& pos, int id, const cv::Vec3b& baseColor,
-           float phaseOffset, float aggression = 0.0f);
+           float phaseOffset, float aggression = 0.0f, const std::string& cellGene = "");
     
     // 重写更新方法以实现AI行为
     void update(float deltaTime, const GameConfig& config, const cv::Size& canvasSize) override;

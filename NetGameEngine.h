@@ -53,6 +53,9 @@ private:
     void handlePlayerStateMessage(const PlayerStateMessage& stateMsg);
     void onNetworkMessage(const NetworkMessage& msg);
     
+    // 检查和处理细胞繁殖
+    void checkCellReproduction();
+    
     // 游戏状态
     bool running;
     cv::Size canvasSize;

@@ -1,5 +1,7 @@
-#include "drawing.h"
+#include <opencv2/opencv.hpp>
 #include "entities/BaseCell.h"
+#include "entities/AICell.h"
+#include <string>
 #include <cmath>
 
 using namespace cv;
@@ -283,9 +285,30 @@ void drawHealthBar(Mat& canvas, const Point2f& position, float cellWidth, float 
 // Function to draw the cell directly on the canvas
 void drawCell(Mat& canvas, const BaseCell& cell, const map<string, float>& config, float scale,
               float time) {
-    // Get cell dimensions
-    float cellWidth = config.at("cell_width") * scale;
-    float cellHeight = config.at("cell_height") * scale;
+    // 获取基本参数值
+    float baseWidth = config.at("cell_width");
+    float baseHeight = config.at("cell_height");
+    
+    // 减弱基因对大小的影响 - 使差异更微妙
+    float sizeEffect = 1.0f + (cell.getSizeMultiplier() - 1.0f) * 0.3f;
+    
+    // 减小离心率范围 - 使用更窄的范围
+    float eccentricity = 0.05f + (cell.sharpnessMultiplier - 1.0f) * 0.15f;
+    
+    // 计算实际宽高，降低基因影响
+    float cellWidth = baseWidth * scale * sizeEffect;
+    float cellHeight = baseHeight * scale * sizeEffect;
+    
+    // 根据离心率调整形状 - 更温和的形变
+    if (cell.sharpnessMultiplier > 1.0f) {
+        // 高尖锐度 = 更狭长，但效果更温和
+        cellWidth *= (1.0f + eccentricity * 0.3f);
+        cellHeight *= (1.0f - eccentricity * 0.1f);
+    } else {
+        // 低尖锐度 = 更圆润，但效果更温和
+        cellWidth *= (1.0f - eccentricity * 0.1f);
+        cellHeight *= (1.0f + eccentricity * 0.1f);
+    }
 
     Point2f cellPos(cell.getPosition().x, cell.getPosition().y);
     bool faceRight = cell.isFacingRight();
@@ -426,21 +449,23 @@ void drawCell(Mat& canvas, const BaseCell& cell, const map<string, float>& confi
                  cell.isShielding(), cell.getParryTime(), cell.hasParried());
     }
 
-    // Draw the spear for player-controlled cells - only draw if not shielding
-    int playerNum = cell.getPlayerNumber();
-    if (playerNum > 0 && !cell.isShielding()) {
-        drawSpear(canvas, cellPos, faceRight, scale, cellWidth, cellHeight,
-                 cell.isAttacking(), cell.getAttackTime());
+    // Draw the spear for all cells when attacking - 所有细胞都用矛
+    if (cell.isAttacking() && !cell.isShielding()) {
+        // AI细胞矛稍小一点
+        float spearScale = (cell.getPlayerNumber() > 0) ? scale : scale * 0.8f;
+        drawSpear(canvas, cellPos, faceRight, spearScale, cellWidth, cellHeight,
+                 true, cell.getAttackTime());
     }
 
     // Draw health bar
     drawHealthBar(canvas, cellPos, cellWidth, cell.getHealth(), cell.getMaxHealth());
 
     // Add player identification text
+    int playerNum = cell.getPlayerNumber();
     if (playerNum > 0) {
         string playerText = "player " + to_string(playerNum);
         Point textPos(static_cast<int>(cell.getPosition().x - 25),
-                      static_cast<int>(cell.getPosition().y - config.at("cell_height") * scale - 30));
+                      static_cast<int>(cell.getPosition().y - cellHeight - 30));
         putText(canvas, playerText, textPos, FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 1, LINE_AA);
     }
 }

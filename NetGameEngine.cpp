@@ -188,7 +188,7 @@ void NetGameEngine::initializeConfig() {
     // 调整阻力使移动更丝滑
     gameConfig.drag = 0.96f;  // 从0.94f调整到0.96f
     gameConfig.numCells = 5; // 联机模式下减少AI数量
-    gameConfig.scale = 0.4f;
+    gameConfig.scale = 0.3f;  // 从0.4f减小到0.3f以缩小所有细胞
     
     // 攻击和防御参数
     gameConfig.attackDuration = 0.5f;
@@ -199,8 +199,8 @@ void NetGameEngine::initializeConfig() {
     gameConfig.damageReduction = 0.5f;
     
     // AI参数
-    gameConfig.randomMoveProbability = 0.05f;
-    gameConfig.randomMoveStrength = 0.3f;
+    gameConfig.randomMoveProbability = 0.08f; // 提高随机移动概率
+    gameConfig.randomMoveStrength = 0.4f;    // 提高随机移动强度
     gameConfig.aggressionChangeProbability = 0.01f;
     gameConfig.aggressionChangeAmount = 0.1f;
     gameConfig.maxAggression = 1.0f;
@@ -208,42 +208,44 @@ void NetGameEngine::initializeConfig() {
     
     // 细胞渲染配置
     cellConfig = {
-        {"cell_width", 80.f},  // 从100.f减小到80.f
-        {"cell_height", 48.f}, // 从60.f减小到48.f
-        {"eye_size", 16.f},    // 从20.f减小到16.f，保持比例
+        {"cell_width", 60.f},  // 从80.f减小到60.f
+        {"cell_height", 36.f}, // 从48.f减小到36.f
+        {"eye_size", 12.f},    // 从16.f减小到12.f，保持比例
         {"eye_ecc", 0.1f}, {"eye_angle", 15.f},
         {"eye_y_off", 0.2f}, {"eye_x_off", 0.5f},
         {"mouth_x0", 0.6f}, {"mouth_y0", 0.55f},
         {"mouth_x1", 0.7f}, {"mouth_y1", 0.65f},
         {"mouth_x2", 0.85f}, {"mouth_y2", 0.55f},
-        {"mouth_width", 2.5f}, // 从3.f减小到2.5f，保持比例
-        {"tail_width", 2.5f}   // 从3.f减小到2.5f，保持比例
+        {"mouth_width", 2.0f}, // 从2.5f减小到2.0f，保持比例
+        {"tail_width", 2.0f}   // 从2.5f减小到2.0f，保持比例
     };
 }
 
 void NetGameEngine::createPlayers() {
     // 根据游戏模式创建玩家
     if (gameMode == NetGameMode::SERVER || gameMode == NetGameMode::STANDALONE) {
-        // 服务器控制玩家1
-        cv::Vec3b player1Color(200, 230, 255); // 蓝色
+        // 服务器控制玩家1 - 使用自定义基因和蓝色阵营
+        cv::Vec3b player1Color(200, 230, 255); // 蓝色基础
         PlayerCell* player1 = new PlayerCell(
             cv::Point2f(canvasSize.width/3, canvasSize.height/2),
-            1, player1Color, 0.0f, 0.0f
+            1, player1Color, 0.0f, 0.0f, "53535" // 均衡型基因
         );
         player1->setShieldDuration(gameConfig.shieldDuration);
         player1->setDamageReduction(gameConfig.damageReduction);
+        player1->setFaction(0); // 设置阵营0(蓝色)
         entities.push_back(std::shared_ptr<BaseCell>(player1));
         playerCells.push_back(player1);
         localPlayer = player1;
         
-        // 创建远程玩家2（客户端控制）
-        cv::Vec3b player2Color(200, 255, 220); // 绿色
+        // 创建远程玩家2（客户端控制）- 使用绿色阵营
+        cv::Vec3b player2Color(200, 255, 220); // 绿色基础
         PlayerCell* player2 = new PlayerCell(
             cv::Point2f(canvasSize.width*2/3, canvasSize.height/2),
-            2, player2Color, 0.0f, 0.0f
+            2, player2Color, 0.0f, 0.0f, "35735" // 攻击型基因
         );
         player2->setShieldDuration(gameConfig.shieldDuration);
         player2->setDamageReduction(gameConfig.damageReduction);
+        player2->setFaction(1); // 设置阵营1(绿色)
         entities.push_back(std::shared_ptr<BaseCell>(player2));
         playerCells.push_back(player2);
         remotePlayer = player2;
@@ -305,6 +307,7 @@ void NetGameEngine::createAICells() {
     std::uniform_real_distribution<float> aggressionDist(0, gameConfig.maxAggression);
     std::uniform_int_distribution<int> colorDist(-30, 30);
     std::uniform_real_distribution<float> phaseDist(0, 2 * CV_PI);
+    std::uniform_int_distribution<int> factionDist(0, 1); // 随机阵营
     
     cv::Vec3b baseColor(200, 230, 255);
     
@@ -318,10 +321,15 @@ void NetGameEngine::createAICells() {
         float phaseOffset = phaseDist(gen);
         float aggression = aggressionDist(gen);
         
+        // 创建AI细胞，使用随机基因
         auto aiCell = new AICell(
             cv::Point2f(xDist(gen), yDist(gen)),
             0, cellColor, phaseOffset, aggression
         );
+        
+        // 随机设置阵营
+        aiCell->setFaction(factionDist(gen));
+        // 颜色会被自动更新为相应阵营的颜色
         
         entities.push_back(std::shared_ptr<BaseCell>(aiCell));
     }
@@ -350,6 +358,60 @@ void NetGameEngine::updateEntities() {
             }
             else {
                 entity->update(deltaTime, gameConfig, canvasSize);
+            }
+        }
+    }
+    
+    // 检查细胞繁殖
+    checkCellReproduction();
+}
+
+void NetGameEngine::checkCellReproduction() {
+    // 每帧有较小概率检查繁殖
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> probDist(0.0f, 1.0f);
+    
+    if (probDist(gen) > 0.05f) return; // 只有5%的帧会检查繁殖
+    
+    // 检查每对细胞是否满足繁殖条件
+    for (size_t i = 0; i < entities.size(); i++) {
+        for (size_t j = i + 1; j < entities.size(); j++) {
+            BaseCell* cell1 = entities[i].get();
+            BaseCell* cell2 = entities[j].get();
+            
+            // 两个细胞都必须存活
+            if (!cell1->isAlive() || !cell2->isAlive()) continue;
+            
+            // 检查距离
+            float distance = cv::norm(cell1->getPosition() - cell2->getPosition());
+            if (distance > 150.0f) continue; // 必须足够近
+            
+            // 繁殖概率 - 与距离和健康度相关
+            float reproductionChance = 0.05f * (1.0f - distance / 150.0f) * 
+                                       (cell1->getHealth() / cell1->getMaxHealth()) * 
+                                       (cell2->getHealth() / cell2->getMaxHealth());
+            
+            // 同阵营繁殖概率更高
+            if (cell1->getFaction() == cell2->getFaction()) {
+                reproductionChance *= 2.0f;
+            } else {
+                reproductionChance *= 0.5f;
+            }
+            
+            // 决定是否繁殖
+            if (probDist(gen) < reproductionChance) {
+                // 创建后代
+                BaseCell* offspring = BaseCell::createOffspring(*cell1, *cell2, canvasSize);
+                
+                // 如果实体数量没有达到上限，添加后代
+                if (entities.size() < gameConfig.numCells * 2) {
+                    entities.push_back(std::shared_ptr<BaseCell>(offspring));
+                    
+                    // 繁殖消耗健康度
+                    cell1->takeDamage(15.0f);
+                    cell2->takeDamage(15.0f);
+                }
             }
         }
     }
@@ -383,6 +445,13 @@ void NetGameEngine::handleHit(BaseCell* attacker, BaseCell* target,
                             const cv::Point2f& spearTipPosition) {
     bool perfectParry = false;
     
+    // 同阵营伤害降低，敌对阵营伤害提高
+    float factionMultiplier = (attacker->getFaction() == target->getFaction()) ? 0.5f : 1.5f;
+    
+    // 获取基因相关的伤害和防御系数
+    float geneticDamageMultiplier = attacker->getGeneticDamageMultiplier(*target);
+    float geneticDefenseMultiplier = target->getGeneticDefenseMultiplier(*attacker);
+    
     if (checkShieldBlock(*target, *attacker, gameConfig.scale, 
                         cellConfig.at("cell_width"), perfectParry)) {
         // 攻击被盾牌阻挡
@@ -394,9 +463,17 @@ void NetGameEngine::handleHit(BaseCell* attacker, BaseCell* target,
             attacker->setAttacking(false);
             attacker->setAttackTime(0.0f);
             
-            // 应用减伤后的伤害
-            float damage = gameConfig.attackDamage * (1.0f + attacker->getAggressionLevel() * 0.5f);
+            // 应用修饰后的伤害
+            float damage = gameConfig.attackDamage 
+                         * (1.0f + attacker->getAggressionLevel() * 0.5f)
+                         * attacker->getSizeMultiplier()  // 大细胞伤害更高
+                         * factionMultiplier
+                         * geneticDamageMultiplier
+                         / geneticDefenseMultiplier;
+            
+            // 应用盾牌减伤
             damage *= (1.0f - target->getDamageReduction());
+            
             target->takeDamage(damage);
             
             // 创建小规模的血液效果
@@ -405,14 +482,20 @@ void NetGameEngine::handleHit(BaseCell* attacker, BaseCell* target,
         }
     } else {
         // 直接命中，没有格挡
-        float damage = gameConfig.attackDamage * (1.0f + attacker->getAggressionLevel() * 0.5f);
+        float damage = gameConfig.attackDamage 
+                     * (1.0f + attacker->getAggressionLevel() * 0.5f)
+                     * attacker->getSizeMultiplier()  // 大细胞伤害更高
+                     * factionMultiplier
+                     * geneticDamageMultiplier
+                     / geneticDefenseMultiplier;
+        
         target->takeDamage(damage);
         
         // 创建血液效果
         createBloodEffect(*target, hitPosition, attacker->isFacingRight(), spearTipPosition);
         
         // 添加击退效果
-        float knockbackStrength = 5.0f;
+        float knockbackStrength = 5.0f * attacker->getSizeMultiplier();
         target->applyKnockback(
             cv::Point2f(attacker->isFacingRight() ? 1.0f : -1.0f, -0.5f) * knockbackStrength
         );
@@ -481,6 +564,26 @@ void NetGameEngine::displayControls(cv::Mat& canvas) {
         cv::putText(canvas, shieldStatus, 
                   cv::Point(10, 70 + i*20), cv::FONT_HERSHEY_SIMPLEX, 0.4, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
     }
+    
+    // 显示基因和阵营信息
+    for (int i = 0; i < playerCells.size() && i < 2; i++) {
+        auto player = playerCells[i];
+        
+        // 显示基因信息
+        std::string geneInfo = "Player " + std::to_string(i+1) + 
+                               " Gene: " + player->getGene() + 
+                               " Faction: " + std::to_string(player->getFaction());
+        
+        cv::putText(canvas, geneInfo, 
+                   cv::Point(10, 130 + i*20), cv::FONT_HERSHEY_SIMPLEX, 
+                   0.4, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
+    }
+    
+    // 显示实体数量
+    std::string entitiesInfo = "Entities: " + std::to_string(entities.size());
+    cv::putText(canvas, entitiesInfo, 
+               cv::Point(10, 170), cv::FONT_HERSHEY_SIMPLEX, 
+               0.4, cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
 }
 
 void NetGameEngine::handleInput() {
