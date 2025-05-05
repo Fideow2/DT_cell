@@ -6,6 +6,17 @@ PlayerCell::PlayerCell(const cv::Point2f& pos, int playerNum, const cv::Vec3b& b
     : BaseCell(pos, playerNum, baseColor, phaseOffset, aggression, cellGene) {
 }
 
+// 添加新的简化构造函数实现
+PlayerCell::PlayerCell(const cv::Point2f& pos, int playerNum)
+    : BaseCell(pos, playerNum, 
+              // 根据玩家编号设置默认颜色
+              (playerNum == 1) ? cv::Vec3b(200, 230, 255) : cv::Vec3b(200, 255, 220),
+              // 默认相位偏移
+              0.0f,
+              // 默认攻击性
+              0.0f) {
+}
+
 void PlayerCell::moveUp(float accelerationStep) {
     // 应用基因对移动速度的影响 - 使用平方关系增强效果
     applyAcceleration(cv::Point2f(0, -accelerationStep * std::pow(speedMultiplier, 1.5f)));

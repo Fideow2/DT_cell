@@ -240,6 +240,34 @@ CMakeFiles/cell.dir/NetGameEngine.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/NetGameEngine.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/NetGameEngine.cpp -o CMakeFiles/cell.dir/NetGameEngine.cpp.s
 
+CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o: /Users/mac/Documents/GitHub/DT_cell/games/SinglePlayerGame.cpp
+CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o -MF CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o.d -o CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/games/SinglePlayerGame.cpp
+
+CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/games/SinglePlayerGame.cpp > CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.i
+
+CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/games/SinglePlayerGame.cpp -o CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.s
+
+CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o: CMakeFiles/cell.dir/flags.make
+CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o: /Users/mac/Documents/GitHub/DT_cell/games/MultiPlayerGame.cpp
+CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o: CMakeFiles/cell.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o -MF CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o.d -o CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o -c /Users/mac/Documents/GitHub/DT_cell/games/MultiPlayerGame.cpp
+
+CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/mac/Documents/GitHub/DT_cell/games/MultiPlayerGame.cpp > CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.i
+
+CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/mac/Documents/GitHub/DT_cell/games/MultiPlayerGame.cpp -o CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.s
+
 # Object files for target cell
 cell_OBJECTS = \
 "CMakeFiles/cell.dir/main.cpp.o" \
@@ -253,7 +281,9 @@ cell_OBJECTS = \
 "CMakeFiles/cell.dir/network/NetworkServer.cpp.o" \
 "CMakeFiles/cell.dir/network/NetworkClient.cpp.o" \
 "CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o" \
-"CMakeFiles/cell.dir/NetGameEngine.cpp.o"
+"CMakeFiles/cell.dir/NetGameEngine.cpp.o" \
+"CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o" \
+"CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o"
 
 # External object files for target cell
 cell_EXTERNAL_OBJECTS =
@@ -270,6 +300,8 @@ cell: CMakeFiles/cell.dir/network/NetworkServer.cpp.o
 cell: CMakeFiles/cell.dir/network/NetworkClient.cpp.o
 cell: CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o
 cell: CMakeFiles/cell.dir/NetGameEngine.cpp.o
+cell: CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o
+cell: CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o
 cell: CMakeFiles/cell.dir/build.make
 cell: /usr/local/lib/libopencv_gapi.4.11.0.dylib
 cell: /usr/local/lib/libopencv_stitching.4.11.0.dylib
@@ -328,7 +360,7 @@ cell: /usr/local/lib/libopencv_photo.4.11.0.dylib
 cell: /usr/local/lib/libopencv_imgproc.4.11.0.dylib
 cell: /usr/local/lib/libopencv_core.4.11.0.dylib
 cell: CMakeFiles/cell.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable cell"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/mac/Documents/GitHub/DT_cell/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX executable cell"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cell.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

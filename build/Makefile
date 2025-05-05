@@ -273,6 +273,54 @@ entities/PlayerCell.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/entities/PlayerCell.cpp.s
 .PHONY : entities/PlayerCell.cpp.s
 
+games/MultiPlayerGame.o: games/MultiPlayerGame.cpp.o
+.PHONY : games/MultiPlayerGame.o
+
+# target to build an object file
+games/MultiPlayerGame.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o
+.PHONY : games/MultiPlayerGame.cpp.o
+
+games/MultiPlayerGame.i: games/MultiPlayerGame.cpp.i
+.PHONY : games/MultiPlayerGame.i
+
+# target to preprocess a source file
+games/MultiPlayerGame.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.i
+.PHONY : games/MultiPlayerGame.cpp.i
+
+games/MultiPlayerGame.s: games/MultiPlayerGame.cpp.s
+.PHONY : games/MultiPlayerGame.s
+
+# target to generate assembly for a file
+games/MultiPlayerGame.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.s
+.PHONY : games/MultiPlayerGame.cpp.s
+
+games/SinglePlayerGame.o: games/SinglePlayerGame.cpp.o
+.PHONY : games/SinglePlayerGame.o
+
+# target to build an object file
+games/SinglePlayerGame.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o
+.PHONY : games/SinglePlayerGame.cpp.o
+
+games/SinglePlayerGame.i: games/SinglePlayerGame.cpp.i
+.PHONY : games/SinglePlayerGame.i
+
+# target to preprocess a source file
+games/SinglePlayerGame.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.i
+.PHONY : games/SinglePlayerGame.cpp.i
+
+games/SinglePlayerGame.s: games/SinglePlayerGame.cpp.s
+.PHONY : games/SinglePlayerGame.s
+
+# target to generate assembly for a file
+games/SinglePlayerGame.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cell.dir/build.make CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.s
+.PHONY : games/SinglePlayerGame.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -444,6 +492,12 @@ help:
 	@echo "... entities/PlayerCell.o"
 	@echo "... entities/PlayerCell.i"
 	@echo "... entities/PlayerCell.s"
+	@echo "... games/MultiPlayerGame.o"
+	@echo "... games/MultiPlayerGame.i"
+	@echo "... games/MultiPlayerGame.s"
+	@echo "... games/SinglePlayerGame.o"
+	@echo "... games/SinglePlayerGame.i"
+	@echo "... games/SinglePlayerGame.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

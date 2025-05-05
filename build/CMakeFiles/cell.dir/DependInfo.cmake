@@ -14,6 +14,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/mac/Documents/GitHub/DT_cell/entities/AICell.cpp" "CMakeFiles/cell.dir/entities/AICell.cpp.o" "gcc" "CMakeFiles/cell.dir/entities/AICell.cpp.o.d"
   "/Users/mac/Documents/GitHub/DT_cell/entities/BaseCell.cpp" "CMakeFiles/cell.dir/entities/BaseCell.cpp.o" "gcc" "CMakeFiles/cell.dir/entities/BaseCell.cpp.o.d"
   "/Users/mac/Documents/GitHub/DT_cell/entities/PlayerCell.cpp" "CMakeFiles/cell.dir/entities/PlayerCell.cpp.o" "gcc" "CMakeFiles/cell.dir/entities/PlayerCell.cpp.o.d"
+  "/Users/mac/Documents/GitHub/DT_cell/games/MultiPlayerGame.cpp" "CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o" "gcc" "CMakeFiles/cell.dir/games/MultiPlayerGame.cpp.o.d"
+  "/Users/mac/Documents/GitHub/DT_cell/games/SinglePlayerGame.cpp" "CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o" "gcc" "CMakeFiles/cell.dir/games/SinglePlayerGame.cpp.o.d"
   "/Users/mac/Documents/GitHub/DT_cell/main.cpp" "CMakeFiles/cell.dir/main.cpp.o" "gcc" "CMakeFiles/cell.dir/main.cpp.o.d"
   "/Users/mac/Documents/GitHub/DT_cell/network/NetworkBehaviorMonitor.cpp" "CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o" "gcc" "CMakeFiles/cell.dir/network/NetworkBehaviorMonitor.cpp.o.d"
   "/Users/mac/Documents/GitHub/DT_cell/network/NetworkClient.cpp" "CMakeFiles/cell.dir/network/NetworkClient.cpp.o" "gcc" "CMakeFiles/cell.dir/network/NetworkClient.cpp.o.d"

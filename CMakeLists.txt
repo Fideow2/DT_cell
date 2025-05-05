@@ -28,6 +28,8 @@ set(SOURCES
     network/NetworkClient.cpp
     network/NetworkBehaviorMonitor.cpp
     NetGameEngine.cpp
+    games/SinglePlayerGame.cpp
+    games/MultiPlayerGame.cpp
 )
 
 # 添加可执行文件

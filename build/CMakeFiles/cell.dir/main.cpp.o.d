@@ -1040,7 +1040,7 @@ CMakeFiles/cell.dir/main.cpp.o: \
   /usr/local/Cellar/opencv/4.11.0_1/include/opencv4/opencv2/video.hpp \
   /usr/local/Cellar/opencv/4.11.0_1/include/opencv4/opencv2/video/tracking.hpp \
   /usr/local/Cellar/opencv/4.11.0_1/include/opencv4/opencv2/video/background_segm.hpp \
-  /Users/mac/Documents/GitHub/DT_cell/GameEngine.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/SinglePlayerGame.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/random \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/bernoulli_distribution.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/uniform_real_distribution.h \
@@ -1093,9 +1093,9 @@ CMakeFiles/cell.dir/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/seed_seq.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/student_t_distribution.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__random/weibull_distribution.h \
-  /Users/mac/Documents/GitHub/DT_cell/GameConfig.h \
-  /Users/mac/Documents/GitHub/DT_cell/NetGameEngine.h \
-  /Users/mac/Documents/GitHub/DT_cell/network/NetworkManager.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/../GameConfig.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/MultiPlayerGame.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/../network/NetworkManager.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/thread \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/formatter.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/jthread.h \
@@ -1107,29 +1107,11 @@ CMakeFiles/cell.dir/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__stop_token/stop_token.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/thread.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/this_thread.h \
-  /Users/mac/Documents/GitHub/DT_cell/network/../entities/PlayerCell.h \
-  /Users/mac/Documents/GitHub/DT_cell/network/../entities/BaseCell.h \
-  /Users/mac/Documents/GitHub/DT_cell/network/../entities/Entity.h \
-  /Users/mac/Documents/GitHub/DT_cell/network/../entities/../GameConfig.h \
-  /Users/mac/Documents/GitHub/DT_cell/network/../entities/../structs.h \
-  /Users/mac/Documents/GitHub/DT_cell/network/NetworkBehaviorMonitor.h \
-  /Users/mac/Documents/GitHub/DT_cell/network/NetworkServer.h \
-  /Users/mac/Documents/GitHub/DT_cell/network/NetworkClient.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/fstream \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/filesystem \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/copy_options.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/directory_entry.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/file_status.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/file_type.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/perms.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/file_time_type.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/filesystem_error.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/operations.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/perm_options.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/space_info.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/directory_iterator.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/directory_options.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/path_iterator.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/recursive_directory_iterator.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/u8path.h
+  /Users/mac/Documents/GitHub/DT_cell/games/../network/../entities/PlayerCell.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/../network/../entities/BaseCell.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/../network/../entities/Entity.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/../network/../entities/../GameConfig.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/../network/../entities/../structs.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/../network/NetworkBehaviorMonitor.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/../network/NetworkServer.h \
+  /Users/mac/Documents/GitHub/DT_cell/games/../network/NetworkClient.h
