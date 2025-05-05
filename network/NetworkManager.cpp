@@ -88,10 +88,11 @@ void NetworkManager::displayServerIp(int port) {
         std::cout << "无法获取IP地址" << std::endl;
     } else {
         for (const auto& ip : ipAddresses) {
-            std::cout << "  http://" << ip << ":" << port << std::endl;
+            std::cout << "  " << ip << ":" << port << std::endl;
         }
     }
     
+    std::cout << "本地连接可使用: 127.0.0.1:" << port << std::endl;
     std::cout << "=======================================" << std::endl;
 }
 

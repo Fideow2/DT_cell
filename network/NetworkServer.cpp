@@ -94,6 +94,9 @@ bool NetworkServer::initializeSocket() {
 void NetworkServer::startListening() {
     if (!running) return;
     
+    // 显示服务器IP地址
+    displayServerIp(serverPort);
+    
     // 启动监听线程
     listenThread = std::thread(&NetworkServer::listenThreadFunc, this);
 }

@@ -110,6 +110,9 @@ public:
     typedef std::function<void(const NetworkMessage&)> MessageCallback;
     virtual void setMessageCallback(MessageCallback callback) = 0;
     
+    // 显示服务器IP地址
+    void displayServerIp(int port);
+    
     // 启动服务器
     bool startServer(int port);
     
@@ -125,9 +128,6 @@ private:
     
     // 获取本地IP地址
     std::vector<std::string> getLocalIpAddresses();
-    
-    // 显示服务器IP地址
-    void displayServerIp(int port);
 };
 
 #endif // NETWORK_MANAGER_H
